@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "seed_20260806_062221_seed_76f490871e",
+  "name": "示範種子｜上傳男聲",
+  "kind": "audio_clone",
+  "description": "使用者上傳的固定參考音檔",
+  "referenceText": "",
+  "model": "mimo-v2.5-tts-voiceclone",
+  "referenceFile": "reference.wav",
+  "referenceMime": "audio/wav",
+  "referenceBytes": 368684,
+  "referenceSha256": "76f490871e26ad870f5d75bb1049afd13ca89b53be43571ccde665b4ff05fd55",
+  "createdAt": "2026-08-06T06:22:21.112657+00:00",
+  "status": "ready",
+  "gender": "不指定"
+}

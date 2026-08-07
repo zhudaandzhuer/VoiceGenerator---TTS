@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "seed_20260806_073810_seed_04330b7a62",
+  "name": "模板聲種｜熱血少年",
+  "kind": "text_design",
+  "gender": "男性",
+  "description": "性別硬性要求：輸出必須是男性聲線；不得出現女性高亮共鳴、女性音色或女性年齡特徵。 年輕男性，少年動畫主角聲線，明亮有衝勁、帶青春感，音高不過低，熱血但不嘶吼破音。 請把性別當成不可違反的演員選角條件，並保持年齡、共鳴位置與說話習慣一致。",
+  "referenceText": "我輸過一次，不代表我會一直輸！把名字記好了，下一次站在你面前的人，會是已經超越昨天的我。這場比賽，我接下了！",
+  "model": "mimo-v2.5-tts-voicedesign",
+  "referenceFile": "reference.wav",
+  "referenceMime": "audio/wav",
+  "referenceBytes": 683564,
+  "referenceSha256": "04330b7a627be46b4959915ea8a7692105fca0b60373faf2c0937f7348600af9",
+  "createdAt": "2026-08-06T07:38:10.194747+00:00",
+  "status": "ready"
+}

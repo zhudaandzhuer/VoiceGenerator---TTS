@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "seed_20260806_073735_seed_c8a66691fe",
+  "name": "模板聲種｜御姐指揮官",
+  "kind": "text_design",
+  "gender": "女性",
+  "description": "性別硬性要求：輸出必須是女性聲線；不得出現男性低沉共鳴、男性音色或男性年齡特徵。 成年女性，御姐指揮官聲線，低沉有磁性、穩定強勢、吐字俐落；可以在最後一句切換成貼近耳邊的溫柔，不要男性音色。 請把性別當成不可違反的演員選角條件，並保持年齡、共鳴位置與說話習慣一致。",
+  "referenceText": "站到我身後，現在不是逞強的時候。誰敢越過這條線，我就讓他知道代價。至於你……乖一點，剩下的交給我。",
+  "model": "mimo-v2.5-tts-voicedesign",
+  "referenceFile": "reference.wav",
+  "referenceMime": "audio/wav",
+  "referenceBytes": 706604,
+  "referenceSha256": "c8a66691feef0aec5b790ddc528bb81a20124c71b5a4cc34ba52f7d8d2b67744",
+  "createdAt": "2026-08-06T07:37:35.191196+00:00",
+  "status": "ready"
+}

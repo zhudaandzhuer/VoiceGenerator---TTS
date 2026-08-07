@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-06T08:06:51.745300+00:00",
+  "templates": [
+    {
+      "id": "regent-confession",
+      "audioFile": "regent-confession.wav",
+      "candidateId": "take_20260806_080427_seed_20260806_073633_seed_95722f2150_aa04bd68db",
+      "seedId": "seed_20260806_073633_seed_95722f2150",
+      "seedName": "模板聲種｜冷面攝政王",
+      "durationSeconds": 23.68,
+      "generatedAt": "2026-08-06T08:04:27.544561+00:00",
+      "status": "ready"
+    },
+    {
+      "id": "general-return",
+      "audioFile": "general-return.wav",
+      "candidateId": "take_20260806_080435_seed_20260806_073648_seed_5b1376d889_6d2cffc0a7",
+      "seedId": "seed_20260806_073648_seed_5b1376d889",
+      "seedName": "模板聲種｜戰場女將軍",
+      "durationSeconds": 23.68,
+      "generatedAt": "2026-08-06T08:04:35.660726+00:00",
+      "status": "ready"
+    },
+    {
+      "id": "sweet-confession",
+      "audioFile": "sweet-confession.wav",
+      "candidateId": "take_20260806_080447_seed_20260806_073705_seed_5828f2a17d_85457536cf",
+      "seedId": "seed_20260806_073705_seed_5828f2a17d",
+      "seedName": "模板聲種｜甜美少女",
+      "durationSeconds": 15.52,
+      "generatedAt": "2026-08-06T08:04:47.514715+00:00",
+      "status": "ready"
+    },
+    {
+      "id": "loli-adventure",
+      "audioFile": "loli-adventure.wav",
+      "candidateId": "take_20260806_080455_seed_20260806_073722_seed_683790fffb_2f7439b15c",
+      "seedId": "seed_20260806_073722_seed_683790fffb",
+      "seedName": "模板聲種｜蘿莉冒險家",
+      "durationSeconds": 18.56,
+      "generatedAt": "2026-08-06T08:04:55.325764+00:00",
+      "status": "ready"
+    },
+    {
+      "id": "onee-sama-command",
+      "audioFile": "onee-sama-command.wav",
+      "candidateId": "take_20260806_080502_seed_20260806_073735_seed_c8a66691fe_700451bea3",
+      "seedId": "seed_20260806_073735_seed_c8a66691fe",
+      "seedName": "模板聲種｜御姐指揮官",
+      "durationSeconds": 17.12,
+      "generatedAt": "2026-08-06T08:05:02.903792+00:00",
+      "status": "ready"
+    },
+    {
+      "id": "healing-sister",
+      "audioFile": "healing-sister.wav",
+      "candidateId": "take_20260806_080511_seed_20260806_073748_seed_f278dd0079_860818ce92",
+      "seedId": "seed_20260806_073748_seed_f278dd0079",
+      "seedName": "模板聲種｜治癒系姐姐",
+      "durationSeconds": 19.68,
+      "generatedAt": "2026-08-06T08:05:11.283109+00:00",
+      "status": "ready"
+    },
+    {
+      "id": "hotblooded-boy",
+      "audioFile": "hotblooded-boy.wav",
+      "candidateId": "take_20260806_080517_seed_20260806_073810_seed_04330b7a62_89ff868416",
+      "seedId": "seed_20260806_073810_seed_04330b7a62",
+      "seedName": "模板聲種｜熱血少年",
+      "durationSeconds": 14.56,
+      "generatedAt": "2026-08-06T08:05:17.660274+00:00",
+      "status": "ready"
+    },
+    {
+      "id": "mystery-vow",
+      "audioFile": "mystery-vow.wav",
+      "candidateId": "take_20260806_080525_seed_20260806_073821_seed_5ce6e9bc3b_70e9a9cbb0",
+      "seedId": "seed_20260806_073821_seed_5ce6e9bc3b",
+      "seedName": "模板聲種｜懸疑低語",
+      "durationSeconds": 20.8,
+      "generatedAt": "2026-08-06T08:05:25.137722+00:00",
+      "status": "ready"
+    },
+    {
+      "id": "soulful-neighbor",
+      "audioFile": "soulful-neighbor.wav",
+      "candidateId": "take_20260806_080531_seed_20260806_074909_seed_c2e5eff66b_f0ef765a5c",
+      "seedId": "seed_20260806_074909_seed_c2e5eff66b",
+      "seedName": "模板聲種｜鄰家暖光",
+      "durationSeconds": 13.6,
+      "generatedAt": "2026-08-06T08:05:31.290121+00:00",
+      "status": "ready"
+    },
+    {
+      "id": "warm-confidant",
+      "audioFile": "warm-confidant.wav",
+      "candidateId": "take_20260806_080547_seed_20260806_074920_seed_a9d7843289_60212ea7f7",
+      "seedId": "seed_20260806_074920_seed_a9d7843289",
+      "seedName": "模板聲種｜可靠知己",
+      "durationSeconds": 20.96,
+      "generatedAt": "2026-08-06T08:05:47.883591+00:00",
+      "status": "ready"
+    },
+    {
+      "id": "lazy-magnetic",
+      "audioFile": "lazy-magnetic.wav",
+      "candidateId": "take_20260806_080554_seed_20260806_074933_seed_8af6ce182f_860023ee36",
+      "seedId": "seed_20260806_074933_seed_8af6ce182f",
+      "seedName": "模板聲種｜慵懶磁性",
+      "durationSeconds": 16.64,
+      "generatedAt": "2026-08-06T08:05:54.655401+00:00",
+      "status": "ready"
+    },
+    {
+      "id": "spiritual-whisper",
+      "audioFile": "spiritual-whisper.wav",
+      "candidateId": "take_20260806_080602_seed_20260806_074952_seed_90209a3af1_1791c95c1c",
+      "seedId": "seed_20260806_074952_seed_90209a3af1",
+      "seedName": "模板聲種｜月光低語",
+      "durationSeconds": 19.04,
+      "generatedAt": "2026-08-06T08:06:02.341433+00:00",
+      "status": "ready"
+    },
+    {
+      "id": "podcast-warmth",
+      "audioFile": "podcast-warmth.wav",
+      "candidateId": "take_20260806_080610_seed_20260806_075007_seed_3c1774cec4_91182fe3c8",
+      "seedId": "seed_20260806_075007_seed_3c1774cec4",
+      "seedName": "模板聲種｜溫暖旁白",
+      "durationSeconds": 17.76,
+      "generatedAt": "2026-08-06T08:06:10.278506+00:00",
+      "status": "ready"
+    },
+    {
+      "id": "old-soul-storyteller",
+      "audioFile": "old-soul-storyteller.wav",
+      "candidateId": "take_20260806_080618_seed_20260806_075023_seed_febd138989_5555916bfe",
+      "seedId": "seed_20260806_075023_seed_febd138989",
+      "seedName": "模板聲種｜老靈魂說書人",
+      "durationSeconds": 20.48,
+      "generatedAt": "2026-08-06T08:06:18.224870+00:00",
+      "status": "ready"
+    },
+    {
+      "id": "soft-lover",
+      "audioFile": "soft-lover.wav",
+      "candidateId": "take_20260806_080651_seed_20260806_075045_seed_7cc2f9f7de_5dc66c9b13",
+      "seedId": "seed_20260806_075045_seed_7cc2f9f7de",
+      "seedName": "模板聲種｜軟聲戀人",
+      "durationSeconds": 18.08,
+      "generatedAt": "2026-08-06T08:06:51.743863+00:00",
+      "status": "ready"
+    }
+  ]
+}

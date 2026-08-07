@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "seed_20260806_073648_seed_5b1376d889",
+  "name": "模板聲種｜戰場女將軍",
+  "kind": "text_design",
+  "gender": "女性",
+  "description": "性別硬性要求：輸出必須是女性聲線；不得出現男性低沉共鳴、男性音色或男性年齡特徵。 成年女性，女將軍聲線，明亮而有力量，胸腔共鳴清楚，能壓住哭腔與怒意；不要男性低沉共鳴。 請把性別當成不可違反的演員選角條件，並保持年齡、共鳴位置與說話習慣一致。",
+  "referenceText": "你說我不該回來？那一百七十二具棺木，是我親手從北境帶回來的。我沒有哭，不是因為我不痛，是因為全軍都在等我下令。可你不一樣……你若叫我留下，我就真的不走了。",
+  "model": "mimo-v2.5-tts-voicedesign",
+  "referenceFile": "reference.wav",
+  "referenceMime": "audio/wav",
+  "referenceBytes": 1144364,
+  "referenceSha256": "5b1376d889a4540d87f2b239840754b04f2fab375232f786ad03f609b11da5cc",
+  "createdAt": "2026-08-06T07:36:48.216703+00:00",
+  "status": "ready"
+}

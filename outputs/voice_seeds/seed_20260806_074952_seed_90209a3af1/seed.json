@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "seed_20260806_074952_seed_90209a3af1",
+  "name": "模板聲種｜月光低語",
+  "kind": "text_design",
+  "gender": "女性",
+  "description": "性別硬性要求：輸出必須是女性聲線；不得出現男性低沉共鳴、男性音色或男性年齡特徵。 成年女性，空靈但真實的月光低語聲，氣息柔和、共鳴靠前，像在夜裡把秘密交給一個人；不要冰冷合成感。 自然人聲要求：像真人在同一個房間一次錄製，保留自然呼吸、微小而不規則的停頓、口語連貫與細微強弱變化；重點字可以輕輕加深，但不要每字等長等重、不要機械升降、不要客服播報腔、不要過度完美的合成感。 請把性別當成不可違反的演員選角條件，並保持年齡、共鳴位置與說話習慣一致。",
+  "referenceText": "有些答案不是找不到，只是要等心安靜下來。你聽，風已經替我們把那句再見說完了。從今天起，請帶著祝福走，不必再回頭。",
+  "model": "mimo-v2.5-tts-voicedesign",
+  "referenceFile": "reference.wav",
+  "referenceMime": "audio/wav",
+  "referenceBytes": 929324,
+  "referenceSha256": "90209a3af1d0e2d9375e9595b422c7985a9a9bbcefaf75a68bbef9ec31be3f27",
+  "createdAt": "2026-08-06T07:49:52.296060+00:00",
+  "status": "ready"
+}

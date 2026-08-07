@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "characters": {
+    "zhuda": {
+      "status": "selected",
+      "candidateId": "ZD01"
+    },
+    "xiaokui": {
+      "status": "selected",
+      "candidateId": "XK01"
+    }
+  }
+}

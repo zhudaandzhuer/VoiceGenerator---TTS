@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "provider": "xiaomi_mimo",
+  "model": "mimo-v2.5-tts-voicedesign",
+  "audioFormat": "wav",
+  "galleryTitle": "男/女生音色20選",
+  "gallerySubtitle": "20個候選（男10 + 女10），同句同語速比對，先看音色與情緒一致性",
+  "characters": {
+    "male": {
+      "displayName": "男聲參考",
+      "sampleText": "大家先別急，鏡頭穩了再說我下一句。"
+    },
+    "female": {
+      "displayName": "女聲參考",
+      "sampleText": "大家先別急，鏡頭穩了再說我下一句。"
+    }
+  },
+  "candidates": [
+    {"id": "MB01", "characterId": "male", "label": "男聲A-亮中高", "voiceDescription": "圓潤明亮男聲，語速中快，情緒自然帶笑感。", "tags": ["男", "圓潤", "明亮"]},
+    {"id": "MB02", "characterId": "male", "label": "男聲B-低沉穩", "voiceDescription": "低中音男聲，穩定有重量，語句收尾清楚不拖泥帶水。", "tags": ["男", "低沉", "穩重"]},
+    {"id": "MB03", "characterId": "male", "label": "男聲C-年輕活力", "voiceDescription": "青年男聲，節奏快，語氣有活力但不尖銳。", "tags": ["男", "活力", "年輕"]},
+    {"id": "MB04", "characterId": "male", "label": "男聲D-成熟感", "voiceDescription": "偏成熟的男聲，聲線穩定，情緒克制但有力量。", "tags": ["男", "成熟", "成熟感"]},
+    {"id": "MB05", "characterId": "male", "label": "男聲E-溫柔型", "voiceDescription": "溫和男聲，略帶空氣感，適合敘事導向台詞。", "tags": ["男", "溫柔", "敘事"]},
+    {"id": "MB06", "characterId": "male", "label": "男聲F-硬朗型", "voiceDescription": "偏硬朗男聲，咬字明確，節奏乾淨不拖尾。", "tags": ["男", "硬朗", "清晰"]},
+    {"id": "MB07", "characterId": "male", "label": "男聲G-輕快搞笑", "voiceDescription": "輕快有玩味的男聲，笑點明顯，適合節奏感段落。", "tags": ["男", "搞笑", "節奏"]},
+    {"id": "MB08", "characterId": "male", "label": "男聲H-冷靜型", "voiceDescription": "冷靜克制男聲，停頓自然，情緒不外放。", "tags": ["男", "冷靜", "克制"]},
+    {"id": "MB09", "characterId": "male", "label": "男聲I-磁性沉穩", "voiceDescription": "磁性厚實男聲，語尾穩定，適合主角旁白。", "tags": ["男", "磁性", "沉穩"]},
+    {"id": "MB10", "characterId": "male", "label": "男聲J-親切導覽", "voiceDescription": "親切自然男聲，語氣像導覽者，講解感強。", "tags": ["男", "親切", "導覽"]},
+
+    {"id": "FG01", "characterId": "female", "label": "女聲A-清亮型", "voiceDescription": "清亮年輕女聲，語句流暢、句尾乾淨。", "tags": ["女", "清亮", "年輕"]},
+    {"id": "FG02", "characterId": "female", "label": "女聲B-溫柔型", "voiceDescription": "溫柔柔軟女聲，情緒緩和，善用自然收束。", "tags": ["女", "溫柔", "柔和"]},
+    {"id": "FG03", "characterId": "female", "label": "女聲C-爽朗型", "voiceDescription": "明快爽朗女聲，音色有張力，帶笑點但不誇張。", "tags": ["女", "爽朗", "活潑"]},
+    {"id": "FG04", "characterId": "female", "label": "女聲D-成熟穩健", "voiceDescription": "成熟穩健女聲，語速均衡，情緒控制力好。", "tags": ["女", "成熟", "穩健"]},
+    {"id": "FG05", "characterId": "female", "label": "女聲E-輕盈型", "voiceDescription": "輕盈清脆女聲，速度靈活，適合場景轉折。", "tags": ["女", "輕盈", "靈活"]},
+    {"id": "FG06", "characterId": "female", "label": "女聲F-冷靜解說", "voiceDescription": "偏冷靜的女聲，條理清晰，適合說明資訊。", "tags": ["女", "冷靜", "解說"]},
+    {"id": "FG07", "characterId": "female", "label": "女聲G-柔亮型", "voiceDescription": "柔亮女聲，帶有少許嬌俏感，親近又不做作。", "tags": ["女", "柔亮", "親和"]},
+    {"id": "FG08", "characterId": "female", "label": "女聲H-知性型", "voiceDescription": "知性穩定女聲，重點字清楚，節奏有條理。", "tags": ["女", "知性", "條理"]},
+    {"id": "FG09", "characterId": "female", "label": "女聲I-俏皮型", "voiceDescription": "俏皮有趣女聲，句尾有彈性，適合互動口吻。", "tags": ["女", "俏皮", "有趣"]},
+    {"id": "FG10", "characterId": "female", "label": "女聲J-沉穩內斂", "voiceDescription": "沉穩內斂女聲，情緒穩定，對白不浮誇。", "tags": ["女", "沉穩", "內斂"]}
+  ]
+}

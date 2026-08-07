@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "seed_20260806_063956_seed_509746d9b5",
+  "name": "示範種子｜女將軍（女性鎖定）",
+  "kind": "text_design",
+  "gender": "女性",
+  "description": "性別硬性要求：輸出必須是女性聲線；不得出現男性低沉共鳴、男性音色或男性年齡特徵。 成熟女性，英氣、穩定、有軍令感；中低音域但保留女性共鳴，咬字俐落，情緒克制而有重量。 請把性別當成不可違反的演員選角條件，並保持年齡、共鳴位置與說話習慣一致。",
+  "referenceText": "北境的風再冷，也冷不過我等你回頭的那一刻。",
+  "model": "mimo-v2.5-tts-voicedesign",
+  "referenceFile": "reference.wav",
+  "referenceMime": "audio/wav",
+  "referenceBytes": 291884,
+  "referenceSha256": "509746d9b58d41262eab4d83fde2773dd446f65dc597c49fef9a6e58f11b721f",
+  "createdAt": "2026-08-06T06:39:56.982710+00:00",
+  "status": "ready"
+}

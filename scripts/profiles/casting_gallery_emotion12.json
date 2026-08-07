@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "provider": "xiaomi_mimo",
+  "model": "mimo-v2.5-tts-voicedesign",
+  "audioFormat": "wav",
+  "galleryTitle": "角色情緒測試（12）",
+  "gallerySubtitle": "同句不同情緒，確認角色可否穩定切換情緒語氣",
+  "characters": {
+    "male": {
+      "displayName": "男角色",
+      "sampleText": "先別著急，我知道你在等訊號，現在我先把最重要的說清楚。"
+    },
+    "female": {
+      "displayName": "女角色",
+      "sampleText": "先別著急，我知道你在等訊號，現在我先把最重要的說清楚。"
+    }
+  },
+  "candidates": [
+    {"id": "MB01", "characterId": "male", "label": "男-平靜", "voiceDescription": "平靜穩定男聲，語氣自然平順，節奏中速，語尾不抖。", "tags": ["男", "平靜", "中性"]},
+    {"id": "MB02", "characterId": "male", "label": "男-高興", "voiceDescription": "高興開朗男聲，語速微快，笑意明顯，聲線有彈性但不失真。", "tags": ["男", "開心", "有活力"]},
+    {"id": "MB03", "characterId": "male", "label": "男-緊張", "voiceDescription": "緊張但控制住的男聲，句尾輕微上揚，語速略快，明顯有壓力。", "tags": ["男", "緊張", "壓力"]},
+    {"id": "MB04", "characterId": "male", "label": "男-生氣", "voiceDescription": "生氣克制男聲，語氣有硬度，停頓短，重音加重但不破音。", "tags": ["男", "生氣", "硬核"]},
+    {"id": "MB05", "characterId": "male", "label": "男-傷心", "voiceDescription": "傷心內斂男聲，能量下降，音色略低沉，尾音略帶喘息但清晰。", "tags": ["男", "傷心", "情緒低落"]},
+    {"id": "MB06", "characterId": "male", "label": "男-驚訝", "voiceDescription": "驚訝但還有理智控制的男聲，音高微抬，語氣突然轉向。", "tags": ["男", "驚訝", "反應快"]},
+
+    {"id": "FG01", "characterId": "female", "label": "女-平靜", "voiceDescription": "平靜清楚女聲，語速平穩，重音自然落位，不要誇張。", "tags": ["女", "平靜", "中性"]},
+    {"id": "FG02", "characterId": "female", "label": "女-快樂", "voiceDescription": "快樂開朗女聲，音色明亮，句尾有輕快上揚，氣氛帶動感。", "tags": ["女", "快樂", "活潑"]},
+    {"id": "FG03", "characterId": "female", "label": "女-擔心", "voiceDescription": "擔心微顫女聲，語速有點快，像在急著傳遞重要訊息。", "tags": ["女", "擔心", "急促"]},
+    {"id": "FG04", "characterId": "female", "label": "女-生氣", "voiceDescription": "生氣但有邏輯的女聲，語速緊湊，詞尾明顯加重，保持可懂性。", "tags": ["女", "生氣", "直白"]},
+    {"id": "FG05", "characterId": "female", "label": "女-感傷", "voiceDescription": "感傷溫柔女聲，語速慢一點，尾音回落，情緒柔和沉穩。", "tags": ["女", "感傷", "溫柔"]},
+    {"id": "FG06", "characterId": "female", "label": "女-疑惑", "voiceDescription": "疑惑含蓄女聲，語句中段有停頓，末端上揚，語意未定。", "tags": ["女", "疑惑", "停頓"]}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "seed_20260806_072333_seed_081ab5aae1",
+  "name": "上班族",
+  "kind": "text_design",
+  "gender": "女性",
+  "description": "性別硬性要求：輸出必須是女性聲線；不得出現男性低沉共鳴、男性音色或男性年齡特徵。 女性年輕上班族，平時聲音甜美 請把性別當成不可違反的演員選角條件，並保持年齡、共鳴位置與說話習慣一致。",
+  "referenceText": "你好，這是我的固定聲音種子。從今天開始，請記住我的語氣與節奏。",
+  "model": "mimo-v2.5-tts-voicedesign",
+  "referenceFile": "reference.wav",
+  "referenceMime": "audio/wav",
+  "referenceBytes": 407084,
+  "referenceSha256": "081ab5aae1f5ec432c946b9e5fa66a755a05db4314b5747c8f8d4db91592815a",
+  "createdAt": "2026-08-06T07:23:33.696414+00:00",
+  "status": "ready"
+}

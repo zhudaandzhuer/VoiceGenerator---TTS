@@ -1,0 +1,251 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-06T04:18:39.887518+00:00",
+  "provider": "xiaomi_mimo",
+  "model": "mimo-v2.5-tts-voicedesign",
+  "profileSource": "scripts/profiles/casting_gallery_emotion12.json",
+  "candidateCount": 12,
+  "generatedCount": 12,
+  "samples": [
+    {
+      "candidateId": "MB01",
+      "characterId": "male",
+      "displayName": "男角色",
+      "label": "男-平靜",
+      "tags": [
+        "男",
+        "平靜",
+        "中性"
+      ],
+      "file": "male/mb01.wav",
+      "text": "先別著急，我知道你在等訊號，現在我先把最重要的說清楚。",
+      "voiceDescription": "平靜穩定男聲，語氣自然平順，節奏中速，語尾不抖。",
+      "profileHash": "bd4727e8a8ddea4dd348ef16dabb90e213232c78be54ad1178543756fbb252da",
+      "sha256": "fdb6af6474b03a51e4a98a9fcde220eaddfe1b084a2d2195c4c4bde8e5c5db00",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 7.84
+    },
+    {
+      "candidateId": "MB02",
+      "characterId": "male",
+      "displayName": "男角色",
+      "label": "男-高興",
+      "tags": [
+        "男",
+        "開心",
+        "有活力"
+      ],
+      "file": "male/mb02.wav",
+      "text": "先別著急，我知道你在等訊號，現在我先把最重要的說清楚。",
+      "voiceDescription": "高興開朗男聲，語速微快，笑意明顯，聲線有彈性但不失真。",
+      "profileHash": "054dadad7cee9aa604d30f07b8862056f3f66f617202befd31b1df0ad6c1792e",
+      "sha256": "83e4f1ccab0e6adf45f75ff7207590e408857796ff94c8edc836a6e700ce2915",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 6.08
+    },
+    {
+      "candidateId": "MB03",
+      "characterId": "male",
+      "displayName": "男角色",
+      "label": "男-緊張",
+      "tags": [
+        "男",
+        "緊張",
+        "壓力"
+      ],
+      "file": "male/mb03.wav",
+      "text": "先別著急，我知道你在等訊號，現在我先把最重要的說清楚。",
+      "voiceDescription": "緊張但控制住的男聲，句尾輕微上揚，語速略快，明顯有壓力。",
+      "profileHash": "8dc432e9294da56c9effe72a37c293c1121c244092fd99ef5ae312f5951580ad",
+      "sha256": "682b6ea6c92b0aba0ce1f2b517a838b310e3300a3436f3d0c9f95d2a7edb7ec4",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 6.56
+    },
+    {
+      "candidateId": "MB04",
+      "characterId": "male",
+      "displayName": "男角色",
+      "label": "男-生氣",
+      "tags": [
+        "男",
+        "生氣",
+        "硬核"
+      ],
+      "file": "male/mb04.wav",
+      "text": "先別著急，我知道你在等訊號，現在我先把最重要的說清楚。",
+      "voiceDescription": "生氣克制男聲，語氣有硬度，停頓短，重音加重但不破音。",
+      "profileHash": "f39d2d9c8bf975568b7e9c7b839121c583a5498a7b9d5fbfd2f4f6e737cd9a86",
+      "sha256": "4c9a659d371d811cb9d4b9d9aba7c99e77b4c3fb4a7ebef60b4d19d4a7ed1f80",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 8.96
+    },
+    {
+      "candidateId": "MB05",
+      "characterId": "male",
+      "displayName": "男角色",
+      "label": "男-傷心",
+      "tags": [
+        "男",
+        "傷心",
+        "情緒低落"
+      ],
+      "file": "male/mb05.wav",
+      "text": "先別著急，我知道你在等訊號，現在我先把最重要的說清楚。",
+      "voiceDescription": "傷心內斂男聲，能量下降，音色略低沉，尾音略帶喘息但清晰。",
+      "profileHash": "3dd399e20e8266814674f7a627c68ce71b3663aef42fc5b07e86322f991396bb",
+      "sha256": "74ed5590001621c904c46048132fda047b70017c52c1d92367a45845d12dd3e9",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 10.88
+    },
+    {
+      "candidateId": "MB06",
+      "characterId": "male",
+      "displayName": "男角色",
+      "label": "男-驚訝",
+      "tags": [
+        "男",
+        "驚訝",
+        "反應快"
+      ],
+      "file": "male/mb06.wav",
+      "text": "先別著急，我知道你在等訊號，現在我先把最重要的說清楚。",
+      "voiceDescription": "驚訝但還有理智控制的男聲，音高微抬，語氣突然轉向。",
+      "profileHash": "bbc287c17d2e073366a3834c5fd651091352d3a459c114e521713a605e90093b",
+      "sha256": "da8ab87f537703f83fbbdbd827eed452252ff13b411e6ad48cc0d7d4692c9636",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 6.08
+    },
+    {
+      "candidateId": "FG01",
+      "characterId": "female",
+      "displayName": "女角色",
+      "label": "女-平靜",
+      "tags": [
+        "女",
+        "平靜",
+        "中性"
+      ],
+      "file": "female/fg01.wav",
+      "text": "先別著急，我知道你在等訊號，現在我先把最重要的說清楚。",
+      "voiceDescription": "平靜清楚女聲，語速平穩，重音自然落位，不要誇張。",
+      "profileHash": "4660edad62c3120fc923d3bedbdace15731594395d4f5850148d459d4c401a41",
+      "sha256": "c0a9b6c9fe4fff0f7fb5480562322a82248302ef359cc06c36dd054e35d453ed",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 7.52
+    },
+    {
+      "candidateId": "FG02",
+      "characterId": "female",
+      "displayName": "女角色",
+      "label": "女-快樂",
+      "tags": [
+        "女",
+        "快樂",
+        "活潑"
+      ],
+      "file": "female/fg02.wav",
+      "text": "先別著急，我知道你在等訊號，現在我先把最重要的說清楚。",
+      "voiceDescription": "快樂開朗女聲，音色明亮，句尾有輕快上揚，氣氛帶動感。",
+      "profileHash": "65ca4e9ac1d01de738cefa669c1bbf9487692db19cfdfde90e6a25da90fd1872",
+      "sha256": "7a68425f4575870b3385873cb9c369b29241ca36b42adfbd9741bdde3ba2cc1d",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 4.96
+    },
+    {
+      "candidateId": "FG03",
+      "characterId": "female",
+      "displayName": "女角色",
+      "label": "女-擔心",
+      "tags": [
+        "女",
+        "擔心",
+        "急促"
+      ],
+      "file": "female/fg03.wav",
+      "text": "先別著急，我知道你在等訊號，現在我先把最重要的說清楚。",
+      "voiceDescription": "擔心微顫女聲，語速有點快，像在急著傳遞重要訊息。",
+      "profileHash": "79641e181a07d339b246aba804c838e1d7948594d506c0118645fe0a455dacc4",
+      "sha256": "f7ba45d3dd75a07f5f6e8d7a37d5ac40daf954e73ced3c275998a5a1d5724dd8",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 7.2
+    },
+    {
+      "candidateId": "FG04",
+      "characterId": "female",
+      "displayName": "女角色",
+      "label": "女-生氣",
+      "tags": [
+        "女",
+        "生氣",
+        "直白"
+      ],
+      "file": "female/fg04.wav",
+      "text": "先別著急，我知道你在等訊號，現在我先把最重要的說清楚。",
+      "voiceDescription": "生氣但有邏輯的女聲，語速緊湊，詞尾明顯加重，保持可懂性。",
+      "profileHash": "389a7139cee4a3fb39a20dfddacb12ecc77045dcfdf75ec78987c3cc40d707b8",
+      "sha256": "820cccb91fcd92f0be07937a18799bd0fe7552133c78153c4bb10bb078f5a8b3",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 6.24
+    },
+    {
+      "candidateId": "FG05",
+      "characterId": "female",
+      "displayName": "女角色",
+      "label": "女-感傷",
+      "tags": [
+        "女",
+        "感傷",
+        "溫柔"
+      ],
+      "file": "female/fg05.wav",
+      "text": "先別著急，我知道你在等訊號，現在我先把最重要的說清楚。",
+      "voiceDescription": "感傷溫柔女聲，語速慢一點，尾音回落，情緒柔和沉穩。",
+      "profileHash": "0342d687e4b62a7acae51b9f2839e038a138e843ce3b31842c20df75c70fb474",
+      "sha256": "70ac5cabc24d627f65c54c54d48f19d8da8ad6386d3fb2e5774e046464a376dd",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 10.56
+    },
+    {
+      "candidateId": "FG06",
+      "characterId": "female",
+      "displayName": "女角色",
+      "label": "女-疑惑",
+      "tags": [
+        "女",
+        "疑惑",
+        "停頓"
+      ],
+      "file": "female/fg06.wav",
+      "text": "先別著急，我知道你在等訊號，現在我先把最重要的說清楚。",
+      "voiceDescription": "疑惑含蓄女聲，語句中段有停頓，末端上揚，語意未定。",
+      "profileHash": "6f04760422590189ec380ac0d1eb20d2ae3397d1c17ced1dad530d7282727c10",
+      "sha256": "cccf97f3756a1e642fb878ec7bfde991cf8c860e52b65ea297f907554e0aca80",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 8.96
+    }
+  ]
+}

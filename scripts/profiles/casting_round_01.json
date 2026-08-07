@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "provider": "xiaomi_mimo",
+  "model": "mimo-v2.5-pro",
+  "audioFormat": "wav",
+  "characters": {
+    "zhuda": {
+      "displayName": "豬大",
+      "voiceDescription": "圓亮可愛的玩偶中高音，語氣活潑，笑點明顯，節奏清楚，不要過度戲劇化。",
+      "sampleText": "欸，我回來啦！今天也要開心出擊，所有劇情都等著我們把它玩得更好看。"
+    },
+    "xiaokui": {
+      "displayName": "林小葵",
+      "voiceDescription": "年輕女生，普通話清楚、明亮，有節奏感與笑感，語速中等。",
+      "sampleText": "你今天也來了？我剛好有一段新的台詞想試試，你幫我聽聽自然不自然。"
+    },
+    "xujiao": {
+      "displayName": "徐嬌",
+      "voiceDescription": "清爽俐落的女生嗓音，語速明快、情緒直接，偶爾帶點調皮。",
+      "sampleText": "別等了，跟上來！我給你一個安全、快速的節奏，你只要照著節拍走。"
+    }
+  }
+}

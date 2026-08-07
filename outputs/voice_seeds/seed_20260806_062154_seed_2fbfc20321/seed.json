@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "seed_20260806_062154_seed_2fbfc20321",
+  "name": "示範種子｜古裝男聲",
+  "kind": "text_design",
+  "description": "成熟男性，低沉醇厚，古裝權臣氣質，語速偏慢而克制，字尾帶很輕的疲憊氣聲，吐字清楚。",
+  "referenceText": "這是我的固定聲音。從今以後，每一句話都要保留這份沉著。",
+  "model": "mimo-v2.5-tts-voicedesign",
+  "referenceFile": "reference.wav",
+  "referenceMime": "audio/wav",
+  "referenceBytes": 514604,
+  "referenceSha256": "2fbfc2032148d29db30d3eb4a5dd8624627a7c74c257e1857ef489ec5e898e5f",
+  "createdAt": "2026-08-06T06:21:54.299662+00:00",
+  "status": "ready",
+  "gender": "不指定"
+}

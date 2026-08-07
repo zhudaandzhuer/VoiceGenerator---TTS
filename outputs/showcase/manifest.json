@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-06T06:36:31.424460+00:00",
+  "provider": "xiaomi_mimo",
+  "model": "mimo-v2.5-tts-voiceclone",
+  "galleryTitle": "古裝劇複合情緒示範",
+  "gallerySubtitle": "用固定聲音參考，演示憤怒、愧疚、委屈、忐忑、動情與釋然的連續轉場。",
+  "title": "古裝劇複合情緒示範",
+  "subtitle": "固定聲音參考 + 複合情緒 + 句內音頻標籤",
+  "candidateCount": 3,
+  "generatedCount": 3,
+  "samples": [
+    {
+      "candidateId": "ancient_regent",
+      "characterId": "冷面攝政王",
+      "displayName": "冷面攝政王",
+      "label": "冷冽權臣的底線",
+      "tags": [
+        "壓抑的憤怒",
+        "愧疚",
+        "苦笑",
+        "釋然"
+      ],
+      "file": "ancient_regent.wav",
+      "text": "（壓抑的憤怒，語氣極冷）你以為本王今日來，是要聽你替自己辯解？（停頓，壓低聲音）三年前你跪在雪裡求我救他，我替你擋下那一刀……不是因為你。（苦笑，情緒翻湧）是因為我不願看你，再為任何人低頭。",
+      "voiceDescription": "性別硬性要求：男性。固定成熟男聲，古裝權臣。前段壓抑憤怒，中段帶愧疚與長停頓，最後以苦笑和釋然收束；低沉、克制、字字清楚，不要嘶吼。",
+      "seedId": "voice_04_preset_reference",
+      "voiceDisplay": "voice_04 · 男性",
+      "gender": "男性",
+      "model": "mimo-v2.5-tts-voiceclone",
+      "sha256": "9e0420402258e870c502864851df55faa46b69223552fecaa4ced113810e07ea",
+      "durationSeconds": 23.52
+    },
+    {
+      "candidateId": "ancient_general",
+      "characterId": "女將軍",
+      "displayName": "女將軍",
+      "label": "戰場歸來的告白",
+      "tags": [
+        "憤怒",
+        "委屈",
+        "動情",
+        "哽咽"
+      ],
+      "file": "ancient_general.wav",
+      "text": "（壓抑的憤怒）你說我不該回來？那一百七十二具棺木，是我親手從北境帶回來的。（哽咽，卻強撐平靜）我沒有哭，不是因為我不痛，是因為全軍都在等我下令。（低聲，動情）可你不一樣……你若叫我留下，我就真的不走了。",
+      "voiceDescription": "性別硬性要求：女性。固定成熟女聲，古裝女將軍。先用壓抑憤怒撐住軍令感，再露出委屈與哽咽，最後轉成克制而真誠的動情告白；保持聲音身份穩定，不得出現男性低沉共鳴。",
+      "seedId": "voice_02_preset_reference",
+      "voiceDisplay": "voice_02 · 女性",
+      "gender": "女性",
+      "model": "mimo-v2.5-tts-voiceclone",
+      "sha256": "55f13cd11f43bd64a110b8040fbb7c43e09a3f1d9ff4fec6bb44f4691a84261a",
+      "durationSeconds": 29.76
+    },
+    {
+      "candidateId": "ancient_prince",
+      "characterId": "失勢太子",
+      "displayName": "失勢太子",
+      "label": "雨夜交出玉牌",
+      "tags": [
+        "無奈",
+        "忐忑",
+        "欣慰",
+        "長停頓"
+      ],
+      "file": "ancient_prince.wav",
+      "text": "（無奈，輕輕嘆氣）這塊玉牌，你拿著吧。從今以後，宮門內外，再沒有人會替我開路。（忐忑，語速放慢）你不必現在回答我，我只是……想知道，若我不再是太子，你還願不願意陪我走一段？（長停頓，淡淡欣慰）你點頭了。好，那便夠了。",
+      "voiceDescription": "性別硬性要求：男性。固定成熟男聲，古裝失勢太子。語氣從無奈與嘆氣開始，中段忐忑、放慢、欲言又止，最後因得到回答而溫柔欣慰；不哭喊，讓細節靠氣息和停頓表現。",
+      "seedId": "voice_04_preset_reference",
+      "voiceDisplay": "voice_04 · 男性",
+      "gender": "男性",
+      "model": "mimo-v2.5-tts-voiceclone",
+      "sha256": "554b20c88e0871bc005c35eeae6595f63b2fdae06791ff14af2b0097c73f0341",
+      "durationSeconds": 41.92
+    }
+  ]
+}

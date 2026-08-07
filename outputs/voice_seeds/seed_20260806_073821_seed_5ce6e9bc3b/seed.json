@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "seed_20260806_073821_seed_5ce6e9bc3b",
+  "name": "模板聲種｜懸疑低語",
+  "kind": "text_design",
+  "gender": "女性",
+  "description": "性別硬性要求：輸出必須是女性聲線；不得出現男性低沉共鳴、男性音色或男性年齡特徵。 成年女性，近距離懸疑低語聲線，氣聲與恐懼藏在呼吸裡，字詞清楚，最後能轉為決絕；不要男性低沉。 請把性別當成不可違反的演員選角條件，並保持年齡、共鳴位置與說話習慣一致。",
+  "referenceText": "門外那個人，不是我哥。你現在離開還來得及，別回頭，也別問我為什麼知道。若天亮以前我沒有出去，就把這段錄音交給警察。",
+  "model": "mimo-v2.5-tts-voicedesign",
+  "referenceFile": "reference.wav",
+  "referenceMime": "audio/wav",
+  "referenceBytes": 745004,
+  "referenceSha256": "5ce6e9bc3b7a98c44a519ac0605e594ce6e5df3d58137844fa8c5a8d3770ba52",
+  "createdAt": "2026-08-06T07:38:21.250589+00:00",
+  "status": "ready"
+}

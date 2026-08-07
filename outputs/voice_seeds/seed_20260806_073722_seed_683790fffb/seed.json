@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "seed_20260806_073722_seed_683790fffb",
+  "name": "模板聲種｜蘿莉冒險家",
+  "kind": "text_design",
+  "gender": "女性",
+  "description": "性別硬性要求：輸出必須是女性聲線；不得出現男性低沉共鳴、男性音色或男性年齡特徵。 二次元蘿莉角色聲線，年幼感、活潑明亮、音高偏高但不刺耳，帶淘氣笑意，咬字清楚；不要成熟御姐聲。 請把性別當成不可違反的演員選角條件，並保持年齡、共鳴位置與說話習慣一致。",
+  "referenceText": "笨蛋，這點小事才難不倒我！看好了，我只要數到三，這扇門就會自己打開。……喂，你快點誇我，不然我就要把寶物藏起來了！",
+  "model": "mimo-v2.5-tts-voicedesign",
+  "referenceFile": "reference.wav",
+  "referenceMime": "audio/wav",
+  "referenceBytes": 898604,
+  "referenceSha256": "683790fffb9b40f194337256a257f533dd3ec5f0dec9a8b3a7f5ebc93c9d23e9",
+  "createdAt": "2026-08-06T07:37:22.486221+00:00",
+  "status": "ready"
+}

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "seed_20260806_075007_seed_3c1774cec4",
+  "name": "模板聲種｜溫暖旁白",
+  "kind": "text_design",
+  "gender": "女性",
+  "description": "性別硬性要求：輸出必須是女性聲線；不得出現男性低沉共鳴、男性音色或男性年齡特徵。 成年女性，知性溫暖的 podcast 主持聲，清楚但不播音，保留真人呼吸、自然重音與句間微變化，讓故事有陪伴感。 自然人聲要求：像真人在同一個房間一次錄製，保留自然呼吸、微小而不規則的停頓、口語連貫與細微強弱變化；重點字可以輕輕加深，但不要每字等長等重、不要機械升降、不要客服播報腔、不要過度完美的合成感。 請把性別當成不可違反的演員選角條件，並保持年齡、共鳴位置與說話習慣一致。",
+  "referenceText": "我們常常以為，人生要先準備好才能出發。後來才明白，真正的勇氣，是一邊害怕，一邊替自己留一盞小燈。那盞燈，就是你還願意相信明天。",
+  "model": "mimo-v2.5-tts-voicedesign",
+  "referenceFile": "reference.wav",
+  "referenceMime": "audio/wav",
+  "referenceBytes": 852524,
+  "referenceSha256": "3c1774cec4d1f6c8b4f66c13e45576903a820af63d87a0ad543396b1aec22bee",
+  "createdAt": "2026-08-06T07:50:07.427174+00:00",
+  "status": "ready"
+}

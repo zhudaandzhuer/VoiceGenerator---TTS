@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "provider": "xiaomi_mimo",
+  "model": "mimo-v2.5-pro",
+  "audioFormat": "wav",
+  "galleryTitle": "精簡試音選角廊",
+  "gallerySubtitle": "每位角色共用同一句台詞，先比音色與情緒，不先比演技。",
+  "characters": {
+    "zhuda": {
+      "displayName": "豬大",
+      "sampleText": "今天的任務很直白，但我要用最穩的節奏把場面說服你。"
+    },
+    "xiaokui": {
+      "displayName": "林小葵",
+      "sampleText": "你不用急，我已經準備好台詞節拍了，照我節奏走就不會掉線。"
+    }
+  },
+  "candidates": [
+    {
+      "id": "ZD01",
+      "characterId": "zhuda",
+      "label": "活潑圓潤版",
+      "voiceDescription": "圓潤、可愛但有力量，笑點清晰，語速中快。",
+      "tags": ["活潑", "親和", "快節奏"]
+    },
+    {
+      "id": "ZD02",
+      "characterId": "zhuda",
+      "label": "低音穩健版",
+      "voiceDescription": "聲線偏穩定，低頻支撐感好，情緒不急不躁。",
+      "tags": ["穩定", "可信", "沉著"]
+    },
+    {
+      "id": "XK01",
+      "characterId": "xiaokui",
+      "label": "光滑清亮版",
+      "voiceDescription": "音色清亮有穿透力，語尾乾淨，適合說明與引導。",
+      "tags": ["清亮", "敘事", "清楚"]
+    },
+    {
+      "id": "XK02",
+      "characterId": "xiaokui",
+      "label": "活躍俏皮版",
+      "voiceDescription": "年輕活力型，句尾有輕快上揚，帶點逗趣。",
+      "tags": ["俏皮", "年輕", "有彈性"]
+    }
+  ]
+}

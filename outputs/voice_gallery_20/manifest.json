@@ -1,0 +1,411 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-06T04:07:16.799542+00:00",
+  "provider": "xiaomi_mimo",
+  "model": "mimo-v2.5-tts-voicedesign",
+  "profileSource": "scripts/profiles/casting_gallery_20.json",
+  "candidateCount": 20,
+  "generatedCount": 20,
+  "samples": [
+    {
+      "candidateId": "MB01",
+      "characterId": "male",
+      "displayName": "男聲參考",
+      "label": "男聲A-亮中高",
+      "tags": [
+        "男",
+        "圓潤",
+        "明亮"
+      ],
+      "file": "male/mb01.wav",
+      "text": "大家先別急，鏡頭穩了再說我下一句。",
+      "voiceDescription": "圓潤明亮男聲，語速中快，情緒自然帶笑感。",
+      "profileHash": "840e6a0949f18d4fe0f68bd19dba4cf3d5d02c9798acd92fe7b8f4fbf602fffa",
+      "sha256": "93ee7d49151e285a8cde6618cc7b3aa2e9593221024a7a1d29bd3218d3f4595f",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 3.36
+    },
+    {
+      "candidateId": "MB02",
+      "characterId": "male",
+      "displayName": "男聲參考",
+      "label": "男聲B-低沉穩",
+      "tags": [
+        "男",
+        "低沉",
+        "穩重"
+      ],
+      "file": "male/mb02.wav",
+      "text": "大家先別急，鏡頭穩了再說我下一句。",
+      "voiceDescription": "低中音男聲，穩定有重量，語句收尾清楚不拖泥帶水。",
+      "profileHash": "3a1f1ffbde68331a867735ebebee911fc6e485ac46890c9cea46224539bd4187",
+      "sha256": "b867d88760039ea663d081f8104e72ba91e77e10b4402bf47ae89c3f48e2a3e8",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 4.32
+    },
+    {
+      "candidateId": "MB03",
+      "characterId": "male",
+      "displayName": "男聲參考",
+      "label": "男聲C-年輕活力",
+      "tags": [
+        "男",
+        "活力",
+        "年輕"
+      ],
+      "file": "male/mb03.wav",
+      "text": "大家先別急，鏡頭穩了再說我下一句。",
+      "voiceDescription": "青年男聲，節奏快，語氣有活力但不尖銳。",
+      "profileHash": "d44087c9e58c13e1048eb0d79640464ec0630c9773a52c96b372931517c33980",
+      "sha256": "edccd27fdd3f97dcba68237fd94adc00f525107fff686de1277e0d2708b6b572",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 3.04
+    },
+    {
+      "candidateId": "MB04",
+      "characterId": "male",
+      "displayName": "男聲參考",
+      "label": "男聲D-成熟感",
+      "tags": [
+        "男",
+        "成熟",
+        "成熟感"
+      ],
+      "file": "male/mb04.wav",
+      "text": "大家先別急，鏡頭穩了再說我下一句。",
+      "voiceDescription": "偏成熟的男聲，聲線穩定，情緒克制但有力量。",
+      "profileHash": "a4f593bf88dceea423ffd2e89b269fcfe12a19b4d50898fec08a7cb1e4034b2c",
+      "sha256": "12689d8970f591ae36c41dd1687d56b63d1d592b3361ad32b01d3fe152ffd721",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 3.84
+    },
+    {
+      "candidateId": "MB05",
+      "characterId": "male",
+      "displayName": "男聲參考",
+      "label": "男聲E-溫柔型",
+      "tags": [
+        "男",
+        "溫柔",
+        "敘事"
+      ],
+      "file": "male/mb05.wav",
+      "text": "大家先別急，鏡頭穩了再說我下一句。",
+      "voiceDescription": "溫和男聲，略帶空氣感，適合敘事導向台詞。",
+      "profileHash": "a1bcca17069087885d825c4f57f4c92c97954d81d631d33bbbf39c8ff954a783",
+      "sha256": "aa4cb81871b5ff2f878c94280400473e9ea1c1a892a2ceab8df56a8dc503be7a",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 4.8
+    },
+    {
+      "candidateId": "MB06",
+      "characterId": "male",
+      "displayName": "男聲參考",
+      "label": "男聲F-硬朗型",
+      "tags": [
+        "男",
+        "硬朗",
+        "清晰"
+      ],
+      "file": "male/mb06.wav",
+      "text": "大家先別急，鏡頭穩了再說我下一句。",
+      "voiceDescription": "偏硬朗男聲，咬字明確，節奏乾淨不拖尾。",
+      "profileHash": "8ab9d6e78dc71251fef07fe84b9d4fa3ae1b94adf0fb00effc0ca3246ef9ecf3",
+      "sha256": "354529bd5dfec352b7ba21bf000063eaec98263f07ddad374c9eea46d2d2464f",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 4.64
+    },
+    {
+      "candidateId": "MB07",
+      "characterId": "male",
+      "displayName": "男聲參考",
+      "label": "男聲G-輕快搞笑",
+      "tags": [
+        "男",
+        "搞笑",
+        "節奏"
+      ],
+      "file": "male/mb07.wav",
+      "text": "大家先別急，鏡頭穩了再說我下一句。",
+      "voiceDescription": "輕快有玩味的男聲，笑點明顯，適合節奏感段落。",
+      "profileHash": "b5c2d7239ea9571686a7182faacf599fb987ee2d701d37ea7c8feb9af906eba6",
+      "sha256": "9f0949a51f6c9666d69c40c4c264050e0f45866708fbb9c4368f200c2d4cebeb",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 3.52
+    },
+    {
+      "candidateId": "MB08",
+      "characterId": "male",
+      "displayName": "男聲參考",
+      "label": "男聲H-冷靜型",
+      "tags": [
+        "男",
+        "冷靜",
+        "克制"
+      ],
+      "file": "male/mb08.wav",
+      "text": "大家先別急，鏡頭穩了再說我下一句。",
+      "voiceDescription": "冷靜克制男聲，停頓自然，情緒不外放。",
+      "profileHash": "e5594c113390ec5c37b772e754158a558de12fa4ef577b10e5100d04176ba41e",
+      "sha256": "ca1cb423e54e1cb59d162e04b27b75ee68d376499b06ad730fa8265f8c3d7902",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 4.48
+    },
+    {
+      "candidateId": "MB09",
+      "characterId": "male",
+      "displayName": "男聲參考",
+      "label": "男聲I-磁性沉穩",
+      "tags": [
+        "男",
+        "磁性",
+        "沉穩"
+      ],
+      "file": "male/mb09.wav",
+      "text": "大家先別急，鏡頭穩了再說我下一句。",
+      "voiceDescription": "磁性厚實男聲，語尾穩定，適合主角旁白。",
+      "profileHash": "8dee7478a71fa9f212c49209ab448ce7e9d30683813fe3baa566e8aca98d2362",
+      "sha256": "ff6fcc53427d39da7e9f407b256ff8265d1b84891df658f69386bb1c0639d35d",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 4.16
+    },
+    {
+      "candidateId": "MB10",
+      "characterId": "male",
+      "displayName": "男聲參考",
+      "label": "男聲J-親切導覽",
+      "tags": [
+        "男",
+        "親切",
+        "導覽"
+      ],
+      "file": "male/mb10.wav",
+      "text": "大家先別急，鏡頭穩了再說我下一句。",
+      "voiceDescription": "親切自然男聲，語氣像導覽者，講解感強。",
+      "profileHash": "61ef2072253725b1b5ff08e52a1cf50a5f5474626484179fcc1a5d611df4169a",
+      "sha256": "f4e694e3f6b92b07bdcd3ed38815473239346842668133759ebc689900d953cf",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 3.68
+    },
+    {
+      "candidateId": "FG01",
+      "characterId": "female",
+      "displayName": "女聲參考",
+      "label": "女聲A-清亮型",
+      "tags": [
+        "女",
+        "清亮",
+        "年輕"
+      ],
+      "file": "female/fg01.wav",
+      "text": "大家先別急，鏡頭穩了再說我下一句。",
+      "voiceDescription": "清亮年輕女聲，語句流暢、句尾乾淨。",
+      "profileHash": "a6a3bb9ffd8583532f51ea968c141407d5aee3e4693802ee97efc40de359edfa",
+      "sha256": "712a549f691d8cefcc0eef9014991c45903dab57a11683b1ac284de7fb7889b2",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 4.64
+    },
+    {
+      "candidateId": "FG02",
+      "characterId": "female",
+      "displayName": "女聲參考",
+      "label": "女聲B-溫柔型",
+      "tags": [
+        "女",
+        "溫柔",
+        "柔和"
+      ],
+      "file": "female/fg02.wav",
+      "text": "大家先別急，鏡頭穩了再說我下一句。",
+      "voiceDescription": "溫柔柔軟女聲，情緒緩和，善用自然收束。",
+      "profileHash": "3b77c9e0196c3aabbedde4408328e56b91ebee78141eac8836d93e803bacb5ac",
+      "sha256": "e99b2d9f423823cb7df30c20be84d83e6e9893f2d5e9c9f07a0bc38e8aba2b2d",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 6.72
+    },
+    {
+      "candidateId": "FG03",
+      "characterId": "female",
+      "displayName": "女聲參考",
+      "label": "女聲C-爽朗型",
+      "tags": [
+        "女",
+        "爽朗",
+        "活潑"
+      ],
+      "file": "female/fg03.wav",
+      "text": "大家先別急，鏡頭穩了再說我下一句。",
+      "voiceDescription": "明快爽朗女聲，音色有張力，帶笑點但不誇張。",
+      "profileHash": "2e3122a454852aecb79eb66edf589b1953dca8f90235aa788675810c6ff95b7c",
+      "sha256": "65ee4841445c5361d8a4f2bae88d4a2a611e77dcb461d98dca2437498468a032",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 3.68
+    },
+    {
+      "candidateId": "FG04",
+      "characterId": "female",
+      "displayName": "女聲參考",
+      "label": "女聲D-成熟穩健",
+      "tags": [
+        "女",
+        "成熟",
+        "穩健"
+      ],
+      "file": "female/fg04.wav",
+      "text": "大家先別急，鏡頭穩了再說我下一句。",
+      "voiceDescription": "成熟穩健女聲，語速均衡，情緒控制力好。",
+      "profileHash": "693fb124a276c928f7d26ead1f304f6176af7d0a216888cd1d59191c0838433e",
+      "sha256": "71bc2710b95ba8282fc380d5e8969f18f61720098294a6cf40414644eed80c60",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 5.44
+    },
+    {
+      "candidateId": "FG05",
+      "characterId": "female",
+      "displayName": "女聲參考",
+      "label": "女聲E-輕盈型",
+      "tags": [
+        "女",
+        "輕盈",
+        "靈活"
+      ],
+      "file": "female/fg05.wav",
+      "text": "大家先別急，鏡頭穩了再說我下一句。",
+      "voiceDescription": "輕盈清脆女聲，速度靈活，適合場景轉折。",
+      "profileHash": "b405bbfa55e0adfec0f955335ea9abf63bc3da8a8bd74d8eec8376dc7eff74fb",
+      "sha256": "d14f6d52643c1d625c9a39da59c03ea56602c50005e6796de47b10faf7806b2d",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 3.36
+    },
+    {
+      "candidateId": "FG06",
+      "characterId": "female",
+      "displayName": "女聲參考",
+      "label": "女聲F-冷靜解說",
+      "tags": [
+        "女",
+        "冷靜",
+        "解說"
+      ],
+      "file": "female/fg06.wav",
+      "text": "大家先別急，鏡頭穩了再說我下一句。",
+      "voiceDescription": "偏冷靜的女聲，條理清晰，適合說明資訊。",
+      "profileHash": "789fda2e5ed7c7db561a650024e5ed4b9ad5cbc6074eef02282e0dd81a881c4e",
+      "sha256": "be1bd51d19e58a6222cf9dd4f67a1aa7fea793c8a0ed5734585fc29b743f8f3a",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 6.24
+    },
+    {
+      "candidateId": "FG07",
+      "characterId": "female",
+      "displayName": "女聲參考",
+      "label": "女聲G-柔亮型",
+      "tags": [
+        "女",
+        "柔亮",
+        "親和"
+      ],
+      "file": "female/fg07.wav",
+      "text": "大家先別急，鏡頭穩了再說我下一句。",
+      "voiceDescription": "柔亮女聲，帶有少許嬌俏感，親近又不做作。",
+      "profileHash": "a3d862c7308e6620f78ba3e4fbf4a851e800e086d618ee2d1831f12a5c6f10b2",
+      "sha256": "fac1adb43a86e4fafbe2c855770cb4f6f8b9d4d93d07cab226d7a9510a2e5d27",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 4.32
+    },
+    {
+      "candidateId": "FG08",
+      "characterId": "female",
+      "displayName": "女聲參考",
+      "label": "女聲H-知性型",
+      "tags": [
+        "女",
+        "知性",
+        "條理"
+      ],
+      "file": "female/fg08.wav",
+      "text": "大家先別急，鏡頭穩了再說我下一句。",
+      "voiceDescription": "知性穩定女聲，重點字清楚，節奏有條理。",
+      "profileHash": "6735a88442742d2948e97e773031312e82564bc9eff4f5c9ea0484cca7f78b1a",
+      "sha256": "4e991c247b7fe95071fadf9fc649705734e698450cd2d8f34def136ca7bfba55",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 3.84
+    },
+    {
+      "candidateId": "FG09",
+      "characterId": "female",
+      "displayName": "女聲參考",
+      "label": "女聲I-俏皮型",
+      "tags": [
+        "女",
+        "俏皮",
+        "有趣"
+      ],
+      "file": "female/fg09.wav",
+      "text": "大家先別急，鏡頭穩了再說我下一句。",
+      "voiceDescription": "俏皮有趣女聲，句尾有彈性，適合互動口吻。",
+      "profileHash": "a363c1ce0a62357fa901ef7f714de566e22b204cf00cb6a165dbafc952a0d1dc",
+      "sha256": "21c42290981b3aa0a43000dbf16d396cba40597bee21f000fcd0988e28de09d4",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 5.92
+    },
+    {
+      "candidateId": "FG10",
+      "characterId": "female",
+      "displayName": "女聲參考",
+      "label": "女聲J-沉穩內斂",
+      "tags": [
+        "女",
+        "沉穩",
+        "內斂"
+      ],
+      "file": "female/fg10.wav",
+      "text": "大家先別急，鏡頭穩了再說我下一句。",
+      "voiceDescription": "沉穩內斂女聲，情緒穩定，對白不浮誇。",
+      "profileHash": "b0dc6de8addc50fdb8e78a358bc1a39bd43c77243e0084dd6316012f78b95a43",
+      "sha256": "da7a72c2b32c087584f436d4341c9fd41abc50eb76696a5dedae0a2ee19c1728",
+      "channels": 1,
+      "sampleRate": 24000,
+      "sampleWidthBytes": 2,
+      "durationSeconds": 5.44
+    }
+  ]
+}

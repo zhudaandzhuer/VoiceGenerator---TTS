@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "provider": "xiaomi_mimo",
+  "model": "mimo-v2.5-tts",
+  "audioFormat": "wav",
+  "title": "MiMo TTS 聲線 × 情緒全量測試",
+  "subtitle": "依官方列出的預置音色、情緒、語調、音色定位、人設、方言與音頻標籤依序試音；同一項目可安全續跑。",
+  "source": {
+    "officialDocs": "https://mimo.mi.com/docs/usage-guide/speech-synthesis",
+    "officialSkill": "https://github.com/XiaomiMiMo/MiMo-Skills/blob/main/skills/mimo-v2-5-tts/SKILL.md",
+    "note": "官方列出的推薦類型不是封閉枚舉，MiMo 也接受自然語言自訂風格；本檔收錄官方清單與官方範例，作為可重現的測試基線。mimo_default 是官方提供的部署預設別名，會依叢集使用冰糖或 Mia。"
+  },
+  "texts": {
+    "neutral": "你好，這是一段基準試音。請記住這個聲線，之後每一句都要保持清楚、自然。",
+    "emotion": "先別急，我知道你在等消息。現在我把最重要的說清楚。",
+    "style": "今天的事情有點複雜，但我們一步一步來，很快就能找到最好的方法。",
+    "tag": "我知道這不容易，但我們還有時間，把最後一句說完就好。",
+    "dialect": "你先聽我講完，這件事真的沒有你想的那麼難。",
+    "singing": "(唱歌)晚風吹過小小的窗，明天醒來就有新的光。"
+  },
+  "voices": [
+    {"id": "voice_01", "voice": "冰糖", "language": "中文", "gender": "女性", "profile": "活潑少女", "description": "明亮、活潑、親和，適合年輕角色與輕喜劇。"},
+    {"id": "voice_02", "voice": "茉莉", "language": "中文", "gender": "女性", "profile": "知性女聲", "description": "清晰、知性、穩重，適合敘事、說明與成熟角色。"},
+    {"id": "voice_03", "voice": "苏打", "displayVoice": "蘇打", "language": "中文", "gender": "男性", "profile": "陽光少年", "description": "陽光、明快、有少年感，適合熱血與日常對話。"},
+    {"id": "voice_04", "voice": "白桦", "displayVoice": "白樺", "language": "中文", "gender": "男性", "profile": "成熟男聲", "description": "成熟、穩健、沉著，適合旁白、領導者與低調情緒。"},
+    {"id": "voice_05", "voice": "Mia", "language": "English", "gender": "Female", "profile": "Lively girl", "description": "Lively and bright English female voice."},
+    {"id": "voice_06", "voice": "Chloe", "language": "English", "gender": "Female", "profile": "Sweet dreamy", "description": "Sweet, soft and dreamy English female voice."},
+    {"id": "voice_07", "voice": "Milo", "language": "English", "gender": "Male", "profile": "Sunny boy", "description": "Sunny, youthful and energetic English male voice."},
+    {"id": "voice_08", "voice": "Dean", "language": "English", "gender": "Male", "profile": "Steady gentle", "description": "Steady, gentle and grounded English male voice."},
+    {"id": "voice_09", "voice": "mimo_default", "displayVoice": "MiMo-預設", "language": "依部署叢集", "gender": "依部署叢集", "profile": "官方預設別名", "description": "使用官方部署叢集的預設音色；中國叢集通常為冰糖，其他叢集可能為 Mia。"}
+  ],
+  "categories": [
+    {
+      "id": "voice_catalog",
+      "title": "預置音色",
+      "subtitle": "官方 8 個具名音色加上 mimo_default 預設別名；這一輪全部用同一句中性基準台詞。",
+      "textKey": "neutral",
+      "items": [
+        {"id": "preset_voice", "label": "預置音色基準", "prompt": "用自然、清楚、不誇張的中性語氣朗讀。", "tags": ["預置音色", "基準"]}
+      ],
+      "voiceMode": "all"
+    },
+    {
+      "id": "base_emotion",
+      "title": "基礎情緒",
+      "subtitle": "官方推薦的 9 個基礎情緒；每個情緒會用 9 個預置音色/預設別名各生成一段。",
+      "textKey": "emotion",
+      "items": [
+        {"id": "happy", "label": "開心", "prompt": "整段以開心、明亮、有笑意的語氣表達，節奏略快但保持清楚。", "tag": "(开心)", "tags": ["基礎情緒", "開心"]},
+        {"id": "sad", "label": "悲傷", "prompt": "整段以悲傷、低落、內斂的語氣表達，速度稍慢，尾音回落。", "tag": "(悲伤)", "tags": ["基礎情緒", "悲傷"]},
+        {"id": "angry", "label": "憤怒", "prompt": "整段以克制但明顯的憤怒表達，重音清楚、聲音有硬度，不要破音。", "tag": "(愤怒)", "tags": ["基礎情緒", "憤怒"]},
+        {"id": "fear", "label": "恐懼", "prompt": "整段以恐懼與警戒表達，氣息略緊，語速不穩但每字可辨。", "tag": "(恐惧)", "tags": ["基礎情緒", "恐懼"]},
+        {"id": "surprise", "label": "驚訝", "prompt": "整段以突然驚訝的反應表達，音高先抬起再收穩，保持自然。", "tag": "(惊讶)", "tags": ["基礎情緒", "驚訝"]},
+        {"id": "excited", "label": "興奮", "prompt": "整段以興奮、充滿能量的語氣表達，節奏偏快、重音有彈性。", "tag": "(兴奋)", "tags": ["基礎情緒", "興奮"]},
+        {"id": "wronged", "label": "委屈", "prompt": "整段以受了委屈但努力說清楚的語氣表達，聲音帶一點壓抑與顫意。", "tag": "(委屈)", "tags": ["基礎情緒", "委屈"]},
+        {"id": "calm", "label": "平靜", "prompt": "整段以平靜、穩定、自然的語氣表達，節奏中速，語尾不抖。", "tag": "(平静)", "tags": ["基礎情緒", "平靜"]},
+        {"id": "indifferent", "label": "冷漠", "prompt": "整段以冷漠、疏離、情緒起伏很小的語氣表達，咬字仍要清晰。", "tag": "(冷漠)", "tags": ["基礎情緒", "冷漠"]}
+      ],
+      "voiceMode": "all"
+    },
+    {
+      "id": "compound_emotion",
+      "title": "複合情緒",
+      "subtitle": "官方列出的複合情緒，檢查角色能否呈現細微而不是單一的情感。",
+      "textKey": "emotion",
+      "items": [
+        {"id": "melancholy", "label": "怅然", "prompt": "以怅然、想起往事後的空落感表達，溫柔但不煽情。", "tags": ["複合情緒", "怅然"]},
+        {"id": "relieved", "label": "欣慰", "prompt": "以事情終於完成後的欣慰表達，鬆一口氣，笑意很淡。", "tags": ["複合情緒", "欣慰"]},
+        {"id": "helpless", "label": "無奈", "prompt": "以無奈、知道無法改變但仍要面對的語氣表達。", "tags": ["複合情緒", "無奈"]},
+        {"id": "guilty", "label": "愧疚", "prompt": "以愧疚、想道歉又有些吞吐的語氣表達，音量略低。", "tags": ["複合情緒", "愧疚"]},
+        {"id": "acceptance", "label": "釋然", "prompt": "以釋然、終於放下的語氣表達，速度舒緩，尾音溫和。", "tags": ["複合情緒", "釋然"]},
+        {"id": "jealous", "label": "嫉妒", "prompt": "以表面平靜、底下帶嫉妒的語氣表達，重音微妙而克制。", "tags": ["複合情緒", "嫉妒"]},
+        {"id": "tired", "label": "厭倦", "prompt": "以厭倦、重複太多次後的疲憊語氣表達，速度偏慢。", "tags": ["複合情緒", "厭倦"]},
+        {"id": "apprehensive", "label": "忐忑", "prompt": "以忐忑、不確定結果的語氣表達，氣息短，句尾略上揚。", "tags": ["複合情緒", "忐忑"]},
+        {"id": "touched", "label": "動情", "prompt": "以受到觸動、情感逐漸湧上的語氣表達，溫暖且真誠。", "tags": ["複合情緒", "動情"]}
+      ],
+      "voiceMode": "reference"
+    },
+    {
+      "id": "overall_tone",
+      "title": "整體語調",
+      "subtitle": "官方推薦的整段語調定位；同一句話比較風格差異。",
+      "textKey": "style",
+      "items": [
+        {"id": "gentle", "label": "溫柔", "prompt": "整段溫柔、放鬆、帶照顧感地說。", "tags": ["整體語調", "溫柔"]},
+        {"id": "aloof", "label": "高冷", "prompt": "整段高冷、疏離、平靜而有距離感地說。", "tags": ["整體語調", "高冷"]},
+        {"id": "lively", "label": "活潑", "prompt": "整段活潑、輕快、有彈性地說。", "tags": ["整體語調", "活潑"]},
+        {"id": "serious", "label": "嚴肅", "prompt": "整段嚴肅、正式、重音明確地說。", "tags": ["整體語調", "嚴肅"]},
+        {"id": "lazy", "label": "慵懶", "prompt": "整段慵懶、鬆散、速度偏慢地說。", "tags": ["整體語調", "慵懶"]},
+        {"id": "playful", "label": "俏皮", "prompt": "整段俏皮、帶一點逗趣和輕微上揚地說。", "tags": ["整體語調", "俏皮"]},
+        {"id": "deep", "label": "深沉", "prompt": "整段深沉、低頻穩定、語速稍慢地說。", "tags": ["整體語調", "深沉"]},
+        {"id": "crisp", "label": "幹練", "prompt": "整段幹練、簡潔、節奏俐落地說。", "tags": ["整體語調", "幹練"]},
+        {"id": "sharp", "label": "凌厲", "prompt": "整段凌厲、準確、重音帶切割感但保持可懂地說。", "tags": ["整體語調", "凌厲"]}
+      ],
+      "voiceMode": "reference"
+    },
+    {
+      "id": "timbre",
+      "title": "音色定位",
+      "subtitle": "官方推薦的聲音質感詞，驗證同一預置音色能否向不同質感靠攏。",
+      "textKey": "style",
+      "items": [
+        {"id": "magnetic", "label": "磁性", "prompt": "聲音帶磁性與吸引力，共鳴集中，語氣自然。", "tags": ["音色定位", "磁性"]},
+        {"id": "rich", "label": "醇厚", "prompt": "聲音醇厚、共鳴飽滿、低頻有支撐。", "tags": ["音色定位", "醇厚"]},
+        {"id": "clear", "label": "清亮", "prompt": "聲音清亮、穿透力好、咬字乾淨。", "tags": ["音色定位", "清亮"]},
+        {"id": "ethereal", "label": "空靈", "prompt": "聲音空靈、輕柔、帶一點距離感。", "tags": ["音色定位", "空靈"]},
+        {"id": "childlike", "label": "稚嫩", "prompt": "聲音稚嫩、輕巧、帶少年或少女的純真感。", "tags": ["音色定位", "稚嫩"]},
+        {"id": "aged", "label": "蒼老", "prompt": "聲音蒼老、緩慢、帶細微顫音但保持清楚。", "tags": ["音色定位", "蒼老"]},
+        {"id": "sweet", "label": "甜美", "prompt": "聲音甜美、柔和、親近，笑意自然。", "tags": ["音色定位", "甜美"]},
+        {"id": "hoarse", "label": "沙啞", "prompt": "聲音略帶沙啞與粗糙質感，但字音仍然清晰。", "tags": ["音色定位", "沙啞"]},
+        {"id": "elegant", "label": "醇雅", "prompt": "聲音醇雅、從容、有知性感，節奏穩定。", "tags": ["音色定位", "醇雅"]}
+      ],
+      "voiceMode": "reference"
+    },
+    {
+      "id": "persona_dialect",
+      "title": "人設腔調與方言",
+      "subtitle": "官方推薦的人設腔調、方言與角色扮演；語音標籤對應的是聲音表演，不是肢體動作。",
+      "textKey": "dialect",
+      "items": [
+        {"id": "jiazi", "label": "夾子音", "prompt": "使用夾子音，音高偏高、語尾輕微上揚，保持自然可懂。", "tags": ["人設腔調", "夾子音"]},
+        {"id": "yujie", "label": "御姐音", "prompt": "使用成熟、從容、有掌控力的御姐音，聲線穩定。", "tags": ["人設腔調", "御姐音"]},
+        {"id": "zhengtai", "label": "正太音", "prompt": "使用清亮、稚嫩、有少年感的正太音。", "tags": ["人設腔調", "正太音"]},
+        {"id": "uncle", "label": "大叔音", "prompt": "使用成熟、略低沉、親切可靠的大叔音。", "tags": ["人設腔調", "大叔音"]},
+        {"id": "taiwan", "label": "台灣腔", "prompt": "使用自然的台灣腔調，語尾與節奏帶台灣口語感。", "tags": ["人設腔調", "台灣腔"]},
+        {"id": "dongbei", "label": "東北話", "prompt": "使用自然東北話口吻，語氣爽朗、節奏有起伏。", "tags": ["方言", "東北話"]},
+        {"id": "sichuan", "label": "四川話", "prompt": "使用自然四川話口吻，語氣親切、有地方節奏。", "tags": ["方言", "四川話"]},
+        {"id": "henan", "label": "河南話", "prompt": "使用自然河南話口吻，語氣清楚、帶地方腔調。", "tags": ["方言", "河南話"]},
+        {"id": "cantonese", "label": "粵語", "prompt": "使用自然粵語口吻，發音清楚、語氣生活化。", "tags": ["方言", "粵語"]},
+        {"id": "sun_wukong", "label": "孫悟空式角色腔", "prompt": "使用神氣、頑皮、帶冒險感的神話英雄角色腔調，不模仿任何特定演員。", "tags": ["角色扮演", "英雄"]},
+        {"id": "lin_daiyu", "label": "林黛玉式角色腔", "prompt": "使用纖細、含蓄、帶文氣與淡淡感傷的古典角色腔調，不模仿任何特定演員。", "tags": ["角色扮演", "古典"]},
+        {"id": "singing", "label": "唱歌", "prompt": "整段以自然旋律演唱，吐字清楚，保持完整歌詞。", "textKey": "singing", "tags": ["特殊風格", "唱歌"]}
+      ],
+      "voiceMode": "reference"
+    },
+    {
+      "id": "audio_tags",
+      "title": "句內音頻標籤",
+      "subtitle": "官方範例中的呼吸、停頓、語速、笑哭與非語言表達；每個標籤放在台詞內測試局部控制。",
+      "textKey": "tag",
+      "items": [
+        {"id": "pause", "label": "停頓", "prompt": "保持自然敘事，依照句內標籤做短停頓。", "inline": "我知道這不容易，[停頓]但我們還有時間，把最後一句說完就好。", "tags": ["節奏", "停頓"]},
+        {"id": "long_pause", "label": "長停頓", "prompt": "保持克制的情緒，句內長停頓要明顯但不要失去連貫。", "inline": "我知道這不容易，[長停頓]但我們還有時間，把最後一句說完就好。", "tags": ["節奏", "長停頓"]},
+        {"id": "fast", "label": "語速加快", "prompt": "句內後半段語速加快，仍然保持字音清楚。", "inline": "我知道這不容易，[語速加快]但我們還有時間，把最後一句說完就好。", "tags": ["節奏", "語速加快"]},
+        {"id": "slow", "label": "語速放緩", "prompt": "句內後半段語速放緩，讓每一字都有重量。", "inline": "我知道這不容易，[語速放緩]但我們還有時間，把最後一句說完就好。", "tags": ["節奏", "語速放緩"]},
+        {"id": "whisper", "label": "低語", "prompt": "句內標籤位置改用低語，其他文字保持自然。", "inline": "我知道這不容易，[低語]但我們還有時間，把最後一句說完就好。", "tags": ["表達", "低語"]},
+        {"id": "soft", "label": "輕聲", "prompt": "句內標籤位置改用輕聲，保持近距離感。", "inline": "我知道這不容易，[輕聲]但我們還有時間，把最後一句說完就好。", "tags": ["表達", "輕聲"]},
+        {"id": "inhale", "label": "吸氣", "prompt": "句內標籤位置加入自然吸氣，不要蓋住正文。", "inline": "我知道這不容易，[吸氣]但我們還有時間，把最後一句說完就好。", "tags": ["呼吸", "吸氣"]},
+        {"id": "deep_breath", "label": "深呼吸", "prompt": "句內標籤位置加入深呼吸後再繼續說。", "inline": "我知道這不容易，[深呼吸]但我們還有時間，把最後一句說完就好。", "tags": ["呼吸", "深呼吸"]},
+        {"id": "sigh", "label": "嘆氣", "prompt": "句內標籤位置加入一個自然嘆氣。", "inline": "我知道這不容易，[嘆氣]但我們還有時間，把最後一句說完就好。", "tags": ["呼吸", "嘆氣"]},
+        {"id": "tremble", "label": "聲音顫抖", "prompt": "句內標籤位置加入細微顫抖，但維持可懂度。", "inline": "我知道這不容易，[聲音顫抖]但我們還有時間，把最後一句說完就好。", "tags": ["音色", "顫抖"]},
+        {"id": "laugh", "label": "笑", "prompt": "句內標籤位置加入短促自然的笑聲。", "inline": "我知道這不容易，[笑]但我們還有時間，把最後一句說完就好。", "tags": ["笑哭", "笑"]},
+        {"id": "light_laugh", "label": "輕笑", "prompt": "句內標籤位置加入輕笑，情緒不要過度。", "inline": "我知道這不容易，[輕笑]但我們還有時間，把最後一句說完就好。", "tags": ["笑哭", "輕笑"]},
+        {"id": "big_laugh", "label": "大笑", "prompt": "句內標籤位置加入爽朗大笑後接回正文。", "inline": "我知道這不容易，[爽朗大笑]但我們還有時間，把最後一句說完就好。", "tags": ["笑哭", "大笑"]},
+        {"id": "sobbing", "label": "抽泣", "prompt": "句內標籤位置加入克制抽泣，正文仍要清楚。", "inline": "我知道這不容易，[抽泣]但我們還有時間，把最後一句說完就好。", "tags": ["笑哭", "抽泣"]},
+        {"id": "choked_up", "label": "哽咽", "prompt": "句內標籤位置加入哽咽，讓情緒有阻塞感但不破音。", "inline": "我知道這不容易，[哽咽]但我們還有時間，把最後一句說完就好。", "tags": ["笑哭", "哽咽"]},
+        {"id": "cough", "label": "咳嗽", "prompt": "句內標籤位置加入短咳嗽，之後自然接回台詞。", "inline": "我知道這不容易，[咳嗽]但我們還有時間，把最後一句說完就好。", "tags": ["非語言", "咳嗽"]},
+        {"id": "breathing", "label": "喘息", "prompt": "句內標籤位置加入短促喘息，之後維持可懂度。", "inline": "我知道這不容易，[喘息]但我們還有時間，把最後一句說完就好。", "tags": ["非語言", "喘息"]},
+        {"id": "hesitant", "label": "欲言又止", "prompt": "句內標籤位置表現欲言又止，再繼續完成句子。", "inline": "我知道這不容易，[欲言又止]但我們還有時間，把最後一句說完就好。", "tags": ["非語言", "欲言又止"]},
+        {"id": "mutter", "label": "碎碎念", "prompt": "句內標籤位置以小聲碎碎念表達，再回到正常音量。", "inline": "我知道這不容易，[碎碎念]但我們還有時間，把最後一句說完就好。", "tags": ["非語言", "碎碎念"]},
+        {"id": "silence", "label": "沉默片刻", "prompt": "句內標籤位置留出沉默片刻，再自然接續。", "inline": "我知道這不容易，[沉默片刻]但我們還有時間，把最後一句說完就好。", "tags": ["非語言", "沉默片刻"]}
+      ],
+      "voiceMode": "reference"
+    }
+  ]
+}

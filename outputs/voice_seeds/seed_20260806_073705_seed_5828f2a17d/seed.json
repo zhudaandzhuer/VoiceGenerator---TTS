@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "seed_20260806_073705_seed_5828f2a17d",
+  "name": "模板聲種｜甜美少女",
+  "kind": "text_design",
+  "gender": "女性",
+  "description": "性別硬性要求：輸出必須是女性聲線；不得出現男性低沉共鳴、男性音色或男性年齡特徵。 年輕女性，甜美清亮、自然有笑意，像戀愛劇女主角，輕柔但不幼稚，咬字清楚，不要低沉。 請把性別當成不可違反的演員選角條件，並保持年齡、共鳴位置與說話習慣一致。",
+  "referenceText": "你怎麼又來了呀？我才沒有一直等你……只是剛好把喜歡你的話，練習了三十七遍。那現在可以換你抱我一下嗎？",
+  "model": "mimo-v2.5-tts-voicedesign",
+  "referenceFile": "reference.wav",
+  "referenceMime": "audio/wav",
+  "referenceBytes": 645164,
+  "referenceSha256": "5828f2a17d3aab6a26dc7b76046296befb969e3c06ebc08461916feec86448a3",
+  "createdAt": "2026-08-06T07:37:05.849899+00:00",
+  "status": "ready"
+}
