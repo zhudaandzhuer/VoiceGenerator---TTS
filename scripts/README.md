@@ -7,7 +7,10 @@
 - `generate_tts_catalog.py`：依官方清單依序生成預置音色、基礎/複合情緒、語調、音色定位、人設方言與句內音頻標籤（可續跑）
 - `generate_showcase.py`：生成首頁古裝劇複合情緒示範音檔
 - `generate_hot_templates.py`：建立熱門模板專用聲音種子，批次生成並保存每張模板的 WAV
+- `cinema_templates.py`：14 組原創電影／電視劇配音場景，包含人物目的、阻力、潛台詞與三段表演節拍
 - `voice_studio_server.py`：本機 Voice Seed Studio API（文字建種、上傳建種、固定種子 + 情緒生成）
+- `test_cinema_pipeline.py`：影視模板、標籤隔離與非法覆寫回退的離線測試
+- `verify_voice_take.py`：用 MiMo ASR 驗收最新成品是否念出控制字、重複或偏離台詞
 - `build_dialogue_voice_profile.py`：從遊戲對話 JSON 組出 production profile（可選）  
 - `generate_production_dialogue.py`：依照 profile 批次生成正式對白 WAV + manifest  
 - `providers/mimo.py`：MiMo API adapter（`chat/completions`）
@@ -60,6 +63,12 @@ python3 run_dashboard.py
 
 # 7) 不開啟瀏覽器只更新輸出（CI/自動化可用）
 python3 run_dashboard.py --no-open
+
+# 8) 驗證電影／電視劇配音管線（不打 API）
+python3 test_cinema_pipeline.py
+
+# 9) ASR 驗收最新一段生成成品（會呼叫 MiMo-V2.5-ASR）
+python3 verify_voice_take.py
 ```
 
 > 提醒：總覽頁會讀取 `outputs/` 下每個子目錄的 `manifest.json`。
@@ -96,6 +105,7 @@ Voice Seed Studio 會另外使用：
 2. 建立後選擇種子，勾選複合情緒與強度；再選演繹方式、語速、音高、停頓、收句與導演補充，輸入台詞並生成。這些控制會寫入紀錄，方便同一角色重生同一種表演。
 3. 性別鎖定會同時寫入建種提示與 `mimo-v2.5-tts-voiceclone` 生成提示；正式生成固定使用同一份參考音檔，聲音種子 hash 與性別會寫入生成紀錄，降低聲線偏離並方便追溯。
 4. 首頁右上角「主題配色」可切換古裝月影、電影暗幕、清透日光或霓虹聲場；「熱門模板」分頁則是熱門台詞與完整生成配置，每張模板都有預先生成的 WAV，選擇你的聲音種子後可直接套用並生成。
+5. 「電影／電視劇配音」分頁把每段戲拆成人物關係、目的、阻力、潛台詞與三段節拍；可用單一種子生成，也可勾選最多四個聲音種子依序批次試鏡。原始模板才會使用受信任的句級音訊標籤，台詞一經改寫就自動切換為乾淨文字。
 
 熱門模板的聲音提示會要求真人一次錄製感：自然呼吸、細微不規則停頓、口語重音與情緒微變化，避免每字等長、客服播報腔與過度合成感。生成時會依問號、感嘆號、省略號、逗號和句號建立逐句語調走位，避免所有句尾套用同一個下墜曲線；「尾音放輕」也會被明確解讀成降低音量，而不是降低音高。
 

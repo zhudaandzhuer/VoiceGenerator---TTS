@@ -15,6 +15,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from cinema_templates import CINEMA_TEMPLATES, RESEARCH_SOURCES
 from paths import resolve_workspace_root
 
 
@@ -218,6 +219,35 @@ def render_dashboard(test_data: list[dict[str, Any]], outputs_root: Path | None 
             f'<button type="button" class="primary-btn hot-template-use" {data_attrs}>套用並生成</button></article>'
         )
     hot_templates_html = "".join(hot_template_cards)
+    cinema_template_cards: list[str] = []
+    for item in CINEMA_TEMPLATES:
+        beat_marks = "".join(
+            f'<span><b>{html.escape(str(beat[0]))}</b>{html.escape(str(beat[1]))}</span>'
+            for beat in item.get("beats", [])
+            if isinstance(beat, (list, tuple)) and len(beat) >= 2
+        )
+        emotion_marks = "".join(
+            f'<span class="tag warm">{html.escape(str(emotion))}</span>'
+            for emotion in item.get("emotions", [])
+        )
+        cinema_template_cards.append(
+            f'<article class="cinema-card" data-cinema-card="{html.escape(item["id"])}" '
+            f'data-cinema-genre="{html.escape(item["genre"])}">'
+            f'<div class="cinema-card-top"><span class="cinema-format">{html.escape(item["format"])}</span>'
+            f'<span class="cinema-genre">{html.escape(item["genre"])}</span></div>'
+            f'<h3>{html.escape(item["title"])}</h3><p class="cinema-hook">{html.escape(item["hook"])}</p>'
+            f'<p class="cinema-line">{html.escape(item["text"])}</p><div class="tags">{emotion_marks}</div>'
+            f'<div class="cinema-beat-strip">{beat_marks}</div>'
+            f'<button type="button" class="primary-btn cinema-card-use" data-cinema-id="{html.escape(item["id"])}">打開導演台</button>'
+            '</article>'
+        )
+    cinema_templates_html = "".join(cinema_template_cards)
+    cinema_sources_html = "".join(
+        f'<a href="{html.escape(source["url"], quote=True)}" target="_blank" rel="noreferrer">'
+        f'<strong>{html.escape(source["name"])}</strong><span>{html.escape(source["note"])}</span></a>'
+        for source in RESEARCH_SOURCES
+    )
+    cinema_templates_json = json.dumps(CINEMA_TEMPLATES, ensure_ascii=False).replace("</", "<\\/")
     featured = [
         {
             "title": "冷面攝政王｜壓抑的愧疚 → 釋然",
@@ -329,6 +359,9 @@ def render_dashboard(test_data: list[dict[str, Any]], outputs_root: Path | None 
   .history-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0 10px}.history-heading h2{font-size:18px;margin:0}.history-heading span{font-size:12px;color:var(--muted);background:#f4e3d7;border-radius:999px;padding:4px 8px}.history-list{display:grid;gap:10px}.history-card{border:1px solid var(--card-bd);background:#fff8f0;border-radius:14px;padding:11px;min-width:0;box-shadow:0 6px 16px #5a37280d}.history-card strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}.history-card small{display:block;color:var(--muted);font-size:12px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.history-card audio{margin:7px 0 2px;height:32px}.history-card p{font-size:12px;line-height:1.45;color:#6e5554;margin:7px 0;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;white-space:pre-wrap}.history-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}.history-top time{font-size:11px;color:var(--muted)}.history-state{font-size:11px;font-weight:800;border-radius:999px;padding:3px 7px}.history-state.done{background:#e0f0e7;color:#367b64}.history-state.error{background:#f8dddd;color:#a5483d}.history-state.pending{background:#fff0c8;color:#956622}.history-load{border:0;background:transparent;color:#8b5548;padding:0;cursor:pointer;font-size:12px;font-weight:800}.history-load:hover{text-decoration:underline}.history-empty{border:1px dashed #ddc3b8;border-radius:14px;padding:14px;color:var(--muted);font-size:13px;line-height:1.5}.pending-card{border-color:#e2b27e;background:linear-gradient(135deg,#fff4d8,#fff8ef)}.pending-line{display:flex;align-items:center;gap:8px;font-weight:800;font-size:13px}.spinner{width:16px;height:16px;border:2px solid #e7c49d;border-top-color:#c86f61;border-radius:50%;animation:spin .8s linear infinite;flex:0 0 auto}.progress-track{height:5px;border-radius:99px;background:#ecd9ca;overflow:hidden;margin-top:10px}.progress-track span{display:block;width:42%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#c86f61,#e6a06d,#c86f61);background-size:200% 100%;animation:progress 1.3s ease-in-out infinite}@keyframes spin{to{transform:rotate(360deg)}}@keyframes progress{0%{transform:translateX(-120%);background-position:0 0}100%{transform:translateX(260%);background-position:100% 0}}
   .template-wrap{max-width:1220px;margin:0 auto 24px}.template-intro{display:flex;align-items:end;justify-content:space-between;gap:14px;margin-bottom:11px}.template-intro h2{font-size:22px;margin:0}.template-intro p{margin:4px 0 0;color:var(--muted);font-size:13px}.template-status{font-size:12px;color:var(--muted);white-space:nowrap}.template-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.template-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0;text-align:left;border:1px solid var(--card-bd);border-radius:16px;padding:13px;background:rgba(255,253,249,.84);color:var(--ink);cursor:pointer;box-shadow:0 7px 20px #5a37280b;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease,background .2s ease}.template-card:hover{transform:translateY(-2px);border-color:var(--rose);box-shadow:0 10px 24px #5a37281c}.template-card.active{border:2px solid var(--rose);padding:12px;box-shadow:0 0 0 4px #c86f611c,0 10px 24px #5a37281c}.template-card-top{display:flex;align-items:center;justify-content:space-between;width:100%}.template-swatches{display:flex;gap:5px}.template-swatch{display:block;width:23px;height:23px;border-radius:50%;background:var(--swatch);border:2px solid #ffffffaa;box-shadow:0 1px 3px #0002}.template-check{display:none;width:21px;height:21px;align-items:center;justify-content:center;background:var(--rose);color:#fff;border-radius:50%;font-size:13px;font-weight:900}.template-card.active .template-check{display:inline-flex}.template-card strong{font-size:15px}.template-desc{color:var(--muted);font-size:12px;line-height:1.45;min-height:35px}.template-tags{display:flex;flex-wrap:wrap;gap:5px}.template-tag{font-size:10px;border-radius:999px;padding:3px 6px;background:#f4e3d7;color:#8b5548}
   .main-toolbar{max-width:1220px;margin:0 auto 12px;display:flex;justify-content:space-between;align-items:center;min-height:34px}.page-switch{display:flex;gap:6px}.page-tab{border:1px solid var(--card-bd);border-radius:999px;background:rgba(255,253,249,.9);color:var(--muted);padding:8px 12px;cursor:pointer;font-weight:800;font-size:12px}.page-tab.active,.page-tab:hover{background:var(--plum);border-color:var(--plum);color:#fff}.theme-menu{position:relative;z-index:8}.theme-button{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--card-bd);border-radius:999px;background:rgba(255,253,249,.9);color:var(--ink);padding:8px 12px;cursor:pointer;font-weight:800;box-shadow:0 5px 16px #5a37280b}.theme-button:hover{border-color:var(--rose)}.theme-button-dot{width:13px;height:13px;border-radius:50%;background:var(--rose);box-shadow:0 0 0 4px #c86f6122}.theme-button-caret{font-size:11px;color:var(--muted)}.theme-popover{position:absolute;right:0;top:calc(100% + 8px);width:242px;padding:8px;border:1px solid var(--card-bd);border-radius:16px;background:var(--paper);box-shadow:0 16px 36px #3d263126}.theme-option{width:100%;display:flex;align-items:center;gap:9px;border:0;border-radius:11px;background:transparent;color:var(--ink);padding:9px;cursor:pointer;text-align:left}.theme-option:hover,.theme-option.active{background:#f4e3d7}.theme-option .template-swatches{flex:0 0 auto}.theme-option strong,.theme-option small{display:block}.theme-option strong{font-size:13px}.theme-option small{font-size:11px;color:var(--muted);margin-top:2px}.theme-option-check{margin-left:auto;display:none;width:20px;height:20px;align-items:center;justify-content:center;background:var(--rose);color:#fff;border-radius:50%;font-size:12px;font-weight:900}.theme-option.active .theme-option-check{display:inline-flex}.hot-templates-wrap{max-width:1220px;margin:0 auto 24px}.hot-templates-intro{display:flex;justify-content:space-between;align-items:end;gap:14px;margin-bottom:11px}.hot-templates-intro h2{font-size:22px;margin:0}.hot-templates-intro p{margin:4px 0 0;color:var(--muted);font-size:13px}.hot-templates-hint{font-size:12px;color:var(--muted);white-space:nowrap}.hot-template-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.hot-template-card{display:flex;flex-direction:column;min-width:0;padding:15px;border:1px solid var(--card-bd);border-radius:18px;background:rgba(255,253,249,.88);box-shadow:0 8px 22px #5a37280c}.hot-template-top{display:flex;align-items:center;justify-content:space-between;gap:6px}.hot-template-kicker{font-size:11px;color:var(--rose);font-weight:900;letter-spacing:.05em}.hot-template-tags{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}.hot-template-tag{font-size:10px;border-radius:999px;padding:3px 6px;background:#f4e3d7;color:#8b5548}.hot-template-card h3{font-size:17px;line-height:1.35;margin:9px 0 2px}.hot-template-label{font-size:12px;color:var(--muted);margin:0}.hot-template-card audio{width:100%;height:32px;margin:7px 0}.hot-template-audio-missing{height:32px;display:flex;align-items:center;color:var(--muted);font-size:11px;border:1px dashed var(--card-bd);border-radius:9px;padding:0 8px;margin:7px 0}.hot-template-text{font-size:13px;line-height:1.6;color:var(--ink);margin:6px 0 8px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;overflow:hidden;min-height:83px}.hot-template-config{font-size:11px;color:var(--muted);padding-top:7px;border-top:1px solid var(--card-bd);margin-top:auto}.hot-template-use{width:100%;margin-top:11px;font-size:12px}
+  .cinema-view{max-width:1220px;margin:0 auto}.cinema-hero{position:relative;overflow:hidden;border-radius:26px;padding:30px;background:radial-gradient(circle at 86% 8%,#f1b89f33,transparent 28%),linear-gradient(135deg,#12131a,#24212a 55%,#4c302f);color:#fff8ef;box-shadow:0 18px 44px #24171c30}.cinema-hero:after{content:"";position:absolute;right:-55px;bottom:-95px;width:260px;height:260px;border:1px solid #f4c29b30;border-radius:50%;box-shadow:0 0 0 38px #f4c29b0b,0 0 0 76px #f4c29b08}.cinema-kicker{position:relative;z-index:1;color:#f0b780;font-size:12px;font-weight:900;letter-spacing:.14em}.cinema-hero h1{position:relative;z-index:1;font-size:clamp(31px,4vw,54px);line-height:1.05;margin:10px 0 13px;max-width:760px}.cinema-hero p{position:relative;z-index:1;color:#dfd0ca;line-height:1.7;max-width:760px;margin:0}.cinema-proof{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:8px;margin-top:19px}.cinema-proof span{border:1px solid #f0c49c4d;background:#ffffff0b;border-radius:999px;padding:7px 10px;font-size:12px;color:#f7e3d4}
+  .director-desk{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:14px;margin:16px 0}.director-main,.director-side{background:rgba(255,253,249,.94);border:1px solid var(--card-bd);border-radius:20px;padding:18px;box-shadow:0 10px 28px #6a403018}.director-main h2{font-size:24px;margin:0 0 5px}.director-kicker{font-size:11px;font-weight:900;color:var(--rose);letter-spacing:.08em}.director-hook{font-size:13px;line-height:1.6;color:var(--muted);margin:0 0 13px}.director-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}.director-fact{border-left:3px solid var(--peach);background:#fff8f1;border-radius:0 11px 11px 0;padding:9px 10px}.director-fact b{display:block;font-size:11px;color:var(--wood);margin-bottom:3px}.director-fact span{font-size:12px;line-height:1.5}.director-beats{display:grid;gap:7px;margin:10px 0}.director-beat{display:grid;grid-template-columns:27px 68px minmax(0,1fr);gap:8px;align-items:start;border-top:1px solid var(--card-bd);padding-top:8px;font-size:12px;line-height:1.5}.director-beat i{display:flex;width:25px;height:25px;border-radius:50%;align-items:center;justify-content:center;background:var(--plum);color:#fff;font-style:normal;font-weight:900}.director-beat b{color:var(--wood)}.cinema-dialogue{min-height:126px!important;line-height:1.7}.director-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.director-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}.director-actions .primary-btn{min-height:42px}.batch-btn{background:var(--plum);color:#fff}.cinema-status{margin-top:9px}.cinema-result{margin-top:12px;border-radius:14px;background:#f8eee7;padding:12px}.cinema-result audio{margin:0}.cinema-result p{font-size:12px;color:var(--muted);margin:7px 0 0}.cast-grid{display:grid;gap:7px;max-height:270px;overflow:auto;margin:10px 0}.cast-option{display:grid;grid-template-columns:auto minmax(0,1fr) 92px;gap:8px;align-items:center;border:1px solid var(--card-bd);border-radius:11px;background:#fffaf5;padding:8px;cursor:pointer}.cast-option:hover,.cast-option.selected{border-color:var(--rose);background:#fff3eb}.cast-option input{width:17px;height:17px}.cast-option b,.cast-option small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cast-option b{font-size:12px}.cast-option small{font-size:11px;color:var(--muted);margin-top:2px}.cast-option audio{height:28px;margin:0;max-width:92px}.cast-help{font-size:12px;color:var(--muted);line-height:1.5}.cinema-filter{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin:20px 0 11px}.cinema-filter button{border:1px solid var(--card-bd);background:rgba(255,253,249,.9);color:var(--muted);border-radius:999px;padding:7px 10px;font-size:12px;font-weight:800;cursor:pointer}.cinema-filter button.active,.cinema-filter button:hover{background:var(--plum);border-color:var(--plum);color:#fff}.cinema-template-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.cinema-card{display:flex;flex-direction:column;min-width:0;border:1px solid var(--card-bd);border-radius:18px;background:rgba(255,253,249,.9);padding:15px;box-shadow:0 8px 22px #5a37280c}.cinema-card.active{border:2px solid var(--rose);padding:14px;box-shadow:0 0 0 4px #c86f6117}.cinema-card-top{display:flex;justify-content:space-between;align-items:center;gap:8px}.cinema-format{font-size:10px;letter-spacing:.08em;font-weight:900;color:#fff;background:var(--plum);border-radius:999px;padding:4px 7px}.cinema-genre{font-size:11px;color:var(--muted)}.cinema-card h3{font-size:17px;line-height:1.35;margin:9px 0 4px}.cinema-hook{font-size:12px;line-height:1.55;color:var(--muted);margin:0}.cinema-line{font-size:13px;line-height:1.65;margin:10px 0;color:var(--ink);display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;min-height:86px}.cinema-beat-strip{display:grid;gap:5px;margin:4px 0 11px}.cinema-beat-strip span{display:grid;grid-template-columns:58px minmax(0,1fr);gap:6px;font-size:10px;line-height:1.4;color:var(--muted)}.cinema-beat-strip b{color:var(--wood)}.cinema-card-use{width:100%;margin-top:auto;font-size:12px}.research-note{margin:20px 0 0;border:1px solid var(--card-bd);border-radius:16px;background:rgba(255,253,249,.75);padding:14px}.research-note summary{cursor:pointer;font-weight:900;color:var(--wood)}.research-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}.research-links a{display:block;text-decoration:none;border:1px solid var(--card-bd);border-radius:11px;padding:9px;color:var(--ink);background:#fffaf5}.research-links a:hover{border-color:var(--rose)}.research-links strong,.research-links span{display:block}.research-links strong{font-size:12px}.research-links span{font-size:11px;line-height:1.45;color:var(--muted);margin-top:3px}
+  body[data-template="neon"] .director-main,body[data-template="neon"] .director-side,body[data-template="neon"] .cinema-card,body[data-template="neon"] .research-note,body[data-template="neon"] .research-links a{background:#151a31;border-color:#414b78}body[data-template="neon"] .director-fact,body[data-template="neon"] .cast-option{background:#1e2542;border-color:#414b78}body[data-template="neon"] .cinema-hook,body[data-template="neon"] .cinema-line,body[data-template="neon"] .director-hook,body[data-template="neon"] .cast-help{color:#aeb7ce}
   .main{padding:24px;min-width:0}h2{font-size:30px;margin:4px 0 6px}.open-folder{display:inline-block;margin:6px 0 2px;color:#7a4a30;font-weight:700;text-decoration:none}.open-folder:hover{text-decoration:underline}
   .hero{max-width:1220px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(270px,.7fr);gap:18px;margin:0 auto 20px;padding:28px;border-radius:26px;color:#fff7ed;background:radial-gradient(circle at 82% 10%,#d17b6455,transparent 32%),linear-gradient(135deg,#2b2135,#4b354d 55%,#74505a);box-shadow:0 18px 45px #4b354d2a;overflow:hidden}.hero-kicker{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#f4c29b;font-weight:800}.hero h1{font-size:clamp(32px,4.3vw,58px);line-height:1.05;margin:10px 0 14px;letter-spacing:-.03em}.hero p{max-width:680px;color:#ead8d2;line-height:1.75;margin:0}.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.hero-actions a{display:inline-flex;align-items:center;padding:11px 15px;border-radius:999px;text-decoration:none;font-weight:800}.hero-primary{background:#f5bd9e;color:#3b2630}.hero-secondary{border:1px solid #f1c8b777;color:#fff7ed}.hero-proof{align-self:stretch;border-left:1px solid #f3cdb633;padding-left:22px;display:flex;flex-direction:column;justify-content:center;gap:12px}.hero-proof strong{font-size:30px;color:#fff}.hero-proof span{display:block;color:#dfc9c5;font-size:13px}.hero-proof .proof-line{display:flex;align-items:baseline;gap:8px}.hero-proof .proof-line strong{font-size:25px;color:#f4c29b}
   .studio-title{display:flex;justify-content:space-between;align-items:end;gap:14px;margin:24px auto 12px;max-width:1220px}.studio-title h2{margin:0}.studio-title p{margin:0;color:var(--muted);font-size:14px}.studio-grid{max-width:1220px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin:0 auto 22px}.panel{background:rgba(255,253,249,.9);border:1px solid var(--card-bd);border-radius:20px;padding:18px;box-shadow:0 10px 28px #6a403018}.panel h3{margin:0 0 5px;font-size:21px}.panel-note{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.6}.mode-switch{display:flex;gap:8px;margin:12px 0 14px}.mode-btn,.emotion-chip{border:1px solid #e1c4b9;background:#fff8f0;color:var(--ink);border-radius:999px;padding:8px 12px;cursor:pointer;font-weight:700}.mode-btn.active,.mode-btn:hover{background:var(--plum);border-color:var(--plum);color:#fff}.field{margin:11px 0}.field label{display:block;font-size:13px;font-weight:800;margin-bottom:6px}.field input,.field textarea,.field select{width:100%;border:1px solid #e0c7bd;border-radius:11px;background:#fffefa;color:var(--ink);padding:10px 11px;outline:none}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--rose);box-shadow:0 0 0 3px #c86f6122}.field textarea{min-height:86px;resize:vertical}.seed-file{border:1px dashed #d29d8f;padding:13px;border-radius:12px;background:#fff7f0}.primary-btn,.ghost-btn{border:0;border-radius:999px;padding:10px 15px;cursor:pointer;font-weight:800}.primary-btn{background:var(--rose);color:#fff}.primary-btn:hover{filter:brightness(1.06)}.ghost-btn{background:#f4e3d7;color:#6a4139}.ghost-btn:hover{background:#ecd0c1}.form-actions{display:flex;align-items:center;gap:10px;margin-top:14px}.status{font-size:13px;color:var(--muted);line-height:1.5}.status.error{color:#a5483d}.status.ok{color:#367b64}.hidden{display:none!important}
@@ -337,13 +370,14 @@ def render_dashboard(test_data: list[dict[str, Any]], outputs_root: Path | None 
   .emotion-list{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 14px}.emotion-chip{font-size:13px}.emotion-chip.selected{background:#9e6659;border-color:#9e6659;color:#fff}.emotion-note{font-size:12px;color:var(--muted);margin:-5px 0 10px}.generation-result{margin-top:14px;border-radius:14px;background:#f8eee7;padding:12px}.generation-result audio{margin:0}.generation-result p{margin:8px 0 0;color:var(--muted);font-size:13px;line-height:1.5}.generation-progress{display:flex;align-items:center;gap:10px;padding:9px 11px;margin-top:12px;border-radius:11px;background:#fff2d7;color:#8b5b29;font-size:13px}.generation-progress .spinner{width:14px;height:14px}
   .showcase-wrap{max-width:1220px;margin:28px auto}.showcase-intro{display:flex;justify-content:space-between;align-items:end;gap:14px;margin-bottom:12px}.showcase-intro h2{margin:0}.showcase-intro p{margin:0;color:var(--muted);font-size:14px}.showcase-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.showcase-card{background:linear-gradient(145deg,#2c2434,#4b354d);color:#fff8ee;border:1px solid #896273;border-radius:18px;padding:16px;box-shadow:0 12px 28px #4b354d25}.showcase-kicker{color:#f0b99d;font-size:11px;font-weight:800;letter-spacing:.08em}.showcase-card h3{font-size:20px;line-height:1.35;margin:8px 0 2px}.showcase-label{color:#dfc8c0;font-size:13px;margin:0 0 8px}.showcase-card .tag.warm{background:#a86c5e;color:#fff1e9}.showcase-card audio{width:100%;margin:8px 0}.showcase-text{white-space:pre-wrap;color:#e5d2cc;font-size:13px;line-height:1.65;min-height:120px}.showcase-card .ghost-btn{background:#f1c2a4;color:#402832}.showcase-card .ghost-btn:hover{background:#ffd4b6}
   .char-block{margin-top:22px}.char-block h3{font-size:22px;border-left:4px solid var(--wood);padding-left:10px;margin:10px 0}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}.card{background:var(--card);border:1px solid var(--card-bd);border-radius:16px;padding:14px;box-shadow:0 8px 22px #5a372814;min-width:0}.card-head{display:flex;align-items:center;gap:8px;min-width:0}.card-head b{background:var(--wood);color:#fff;border-radius:999px;padding:4px 8px;font-size:13px;max-width:56%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:0 1 auto}.card-head h3{margin:0;font-size:18px;min-width:0;overflow-wrap:anywhere;flex:1}.meta{color:var(--muted);font-size:13px;margin:7px 0 6px}.tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.tag{background:#f7dfd2;border-radius:999px;padding:4px 8px;font-size:12px}.tag.tiny{padding:3px 6px;font-size:11px}.text,.desc{font-size:14px;line-height:1.6;overflow-wrap:anywhere}.desc{color:#6f4e43}audio{width:100%;margin-top:8px}.warn{color:#ad4e3d;font-size:13px}.footer{max-width:1220px;margin:28px auto;color:var(--muted);font-size:13px}
+  @media (max-width:1120px){.cinema-template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.director-desk{grid-template-columns:1fr}}
   @media (max-width:1050px){.hero{grid-template-columns:1fr}.hero-proof{border-left:0;border-top:1px solid #f3cdb633;padding:14px 0 0;display:grid;grid-template-columns:repeat(3,1fr)}}
-  @media (max-width:950px){.app{display:flex;flex-direction:column}.sidebar{position:relative;width:auto;height:auto;max-height:none}.history-list{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));max-height:none}.studio-grid{grid-template-columns:1fr}.showcase-grid{grid-template-columns:1fr 1fr}.hot-template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  @media (max-width:620px){.main{padding:14px}.hero{padding:20px;border-radius:20px}.hero-proof{display:flex}.showcase-grid{grid-template-columns:1fr}.studio-title{display:block}.studio-title p{margin-top:5px}.field-row{grid-template-columns:1fr}.hot-templates-intro{display:block}.hot-templates-hint{display:block;margin-top:6px}.hot-template-grid{grid-template-columns:1fr}.theme-popover{right:-4px}.theme-button{font-size:12px}}
+  @media (max-width:950px){.app{display:flex;flex-direction:column}.sidebar{position:relative;width:auto;height:auto;max-height:none}.history-list{display:flex;overflow-x:auto;max-height:none;padding:2px 0 9px;scroll-snap-type:x proximity}.history-card{flex:0 0 260px;scroll-snap-align:start}.studio-grid{grid-template-columns:1fr}.showcase-grid{grid-template-columns:1fr 1fr}.hot-template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:620px){.main{padding:14px}.main-toolbar{align-items:flex-start;gap:9px}.page-switch{flex-wrap:wrap}.hero,.cinema-hero{padding:20px;border-radius:20px}.hero-proof{display:flex}.showcase-grid{grid-template-columns:1fr}.studio-title{display:block}.studio-title p{margin-top:5px}.field-row,.director-facts,.director-options,.research-links{grid-template-columns:1fr}.hot-templates-intro{display:block}.hot-templates-hint{display:block;margin-top:6px}.hot-template-grid,.cinema-template-grid{grid-template-columns:1fr}.theme-popover{right:-4px}.theme-button{font-size:12px}.director-beat{grid-template-columns:27px minmax(0,1fr)}.director-beat span{grid-column:2}.cast-option{grid-template-columns:auto minmax(0,1fr)}.cast-option audio{grid-column:2;max-width:100%;width:100%}}
 """
 
     studio_html = f"""
-      <div class="main-toolbar"><div class="page-switch" role="tablist" aria-label="工作站頁面"><button type="button" class="page-tab active" data-page="workspace" role="tab" aria-selected="true">聲音工作台</button><button type="button" class="page-tab" data-page="templates" role="tab" aria-selected="false">熱門模板</button></div><div class="theme-menu"><button type="button" class="theme-button" id="theme-button" aria-expanded="false"><span class="theme-button-dot"></span><span id="theme-button-label">主題配色</span><span class="theme-button-caret">⌄</span></button><div class="theme-popover" id="theme-popover" hidden>{theme_options_html}</div></div></div>
+      <div class="main-toolbar"><div class="page-switch" role="tablist" aria-label="工作站頁面"><button type="button" class="page-tab active" data-page="workspace" role="tab" aria-selected="true">聲音工作台</button><button type="button" class="page-tab" data-page="templates" role="tab" aria-selected="false">熱門模板</button><button type="button" class="page-tab" data-page="cinema" role="tab" aria-selected="false">電影／電視劇配音</button></div><div class="theme-menu"><button type="button" class="theme-button" id="theme-button" aria-expanded="false"><span class="theme-button-dot"></span><span id="theme-button-label">主題配色</span><span class="theme-button-caret">⌄</span></button><div class="theme-popover" id="theme-popover" hidden>{theme_options_html}</div></div></div>
       <section class="hero workspace-view" aria-labelledby="hero-title">
         <div>
           <div class="hero-kicker">VOICE SEED STUDIO · LOCAL PRODUCTION TOOL</div>
@@ -354,6 +388,22 @@ def render_dashboard(test_data: list[dict[str, Any]], outputs_root: Path | None 
         <div class="hero-proof"><div class="proof-line"><strong>{total_samples}</strong><span>已驗證語音樣本</span></div><div class="proof-line"><strong>9</strong><span>預置音色與預設別名</span></div><div class="proof-line"><strong>Clone</strong><span>固定參考聲音，保留表演控制</span></div></div>
       </section>
       <section class="hot-templates-wrap templates-view hidden" id="hot-templates" aria-labelledby="hot-templates-title"><div class="hot-templates-intro"><div><h2 id="hot-templates-title">熱門模板</h2><p>熱門台詞與完整情緒配置已配好；只要選擇聲音種子，就能直接套用並生成。</p></div><span class="hot-templates-hint">選模板 → 鎖定種子 → 立即生成</span></div><div class="hot-template-grid">{hot_templates_html}</div></section>
+      <section class="cinema-view hidden" id="cinema-studio" aria-labelledby="cinema-title">
+        <header class="cinema-hero"><div class="cinema-kicker">SCREEN PERFORMANCE LAB · ORIGINAL SCENES</div><h1 id="cinema-title">電影／電視劇配音</h1><p>不是把情緒念出來，而是讓角色在鏡頭前有目的、有對手、有沒說出口的話。選一個聲音種子就能生成；勾選多個種子則可直接做角色試鏡。</p><div class="cinema-proof"><span>14 組原創影視場景</span><span>人物目的＋阻力＋潛台詞</span><span>三段表演節拍</span><span>官方 VoiceClone＋音訊標籤</span></div></header>
+        <div class="director-desk" id="director-desk">
+          <article class="director-main"><div class="director-kicker" id="cinema-format-label">電視劇 · 現代愛情</div><h2 id="cinema-scene-title">選一段戲開始</h2><p class="director-hook" id="cinema-scene-hook">從下方模板挑選場景；導演台會載入人物關係、目的、潛台詞與情緒節拍。</p>
+            <div class="director-facts"><div class="director-fact"><b>既定情境</b><span id="cinema-circumstance">—</span></div><div class="director-fact"><b>人物關係</b><span id="cinema-relationship">—</span></div><div class="director-fact"><b>當下目的</b><span id="cinema-objective">—</span></div><div class="director-fact"><b>潛台詞</b><span id="cinema-subtext">—</span></div></div>
+            <div class="director-beats" id="cinema-beats"></div>
+            <div class="field"><label for="cinema-text">配音台詞（可改寫）</label><textarea id="cinema-text" class="cinema-dialogue" placeholder="先從下方選擇一個場景模板"></textarea><small class="control-hint">原始台詞會使用已驗證的句級音訊標籤；改寫後自動改用乾淨台詞，只保留導演情境，不會套錯標籤。</small></div>
+            <div class="director-options"><div class="field"><label for="cinema-shot">鏡頭距離</label><select id="cinema-shot"><option>電影特寫</option><option>電影近景</option><option>電視劇近景</option><option>電視劇中景</option></select></div><div class="field"><label for="cinema-take">表演版本</label><select id="cinema-take"><option>克制真實</option><option>生活流</option><option>節奏推進</option><option>職人寫實</option><option>古裝含蓄</option><option>史詩克制</option><option>自然青春</option><option>喜劇節拍</option><option>動作壓迫</option><option>年代含蓄</option></select></div></div>
+            <div class="director-actions"><button type="button" class="primary-btn" id="cinema-generate">用選定聲線生成</button><button type="button" class="primary-btn batch-btn" id="cinema-batch">批次試鏡（最多 4 聲線）</button></div><div id="cinema-status" class="status cinema-status">請先選場景與聲音種子</div><div id="cinema-progress" class="generation-progress hidden"><span class="spinner"></span><span>導演台正在鎖定聲線、人物目的與節拍…</span></div><div id="cinema-result" class="cinema-result hidden"><audio id="cinema-audio" controls></audio><p id="cinema-meta"></p></div>
+          </article>
+          <aside class="director-side"><div class="director-kicker">CASTING</div><h3>聲線試鏡</h3><p class="cast-help">單次生成會使用下拉選定的聲音；批次試鏡則依勾選順序逐一生成，最多四個，成品全部進左側紀錄。</p><div class="field"><label for="cinema-seed-select">主要聲音種子</label><select id="cinema-seed-select"><option value="">請先建立或載入種子</option></select></div><div class="cast-grid" id="cinema-cast-list"><div class="seed-empty">載入聲音種子後可在這裡勾選試鏡。</div></div></aside>
+        </div>
+        <div class="cinema-filter" id="cinema-filter"><button type="button" class="active" data-cinema-filter="全部">全部</button></div>
+        <div class="cinema-template-grid" id="cinema-template-grid">{cinema_templates_html}</div>
+        <details class="research-note"><summary>這套影視表演方案依據什麼？</summary><div class="research-links">{cinema_sources_html}</div></details>
+      </section>
       <div class="studio-title workspace-view" id="studio"><div><h2>聲音種子工作台</h2><p>先建立一個固定聲音，再到熱門模板直接套用。</p></div></div>
       <section class="studio-grid workspace-view" aria-label="聲音種子與語音生成">
         <article class="panel">
@@ -380,14 +430,18 @@ def render_dashboard(test_data: list[dict[str, Any]], outputs_root: Path | None 
     const $ = selector => document.querySelector(selector);
     let seedMode = 'text_design';
     let seedCache = [];
+    const cinemaTemplates = __CINEMA_TEMPLATES_JSON__;
+    const cinemaTemplateMap = new Map(cinemaTemplates.map(item => [item.id, item]));
+    let activeCinemaTemplate = null;
     const apiAvailable = location.protocol === 'http:' || location.protocol === 'https:';
     const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
     const showPage = page => {
-      const templates = page === 'templates';
-      document.querySelectorAll('.workspace-view').forEach(node => node.classList.toggle('hidden', templates));
-      document.querySelectorAll('.templates-view').forEach(node => node.classList.toggle('hidden', !templates));
-      document.querySelectorAll('.page-tab').forEach(tab => { const active = tab.dataset.page === page; tab.classList.toggle('active', active); tab.setAttribute('aria-selected', active ? 'true' : 'false'); });
-      if (templates) window.scrollTo({top:0, behavior:'smooth'});
+      const target = ['workspace','templates','cinema'].includes(page) ? page : 'workspace';
+      document.querySelectorAll('.workspace-view').forEach(node => node.classList.toggle('hidden', target !== 'workspace'));
+      document.querySelectorAll('.templates-view').forEach(node => node.classList.toggle('hidden', target !== 'templates'));
+      document.querySelectorAll('.cinema-view').forEach(node => node.classList.toggle('hidden', target !== 'cinema'));
+      document.querySelectorAll('.page-tab').forEach(tab => { const active = tab.dataset.page === target; tab.classList.toggle('active', active); tab.setAttribute('aria-selected', active ? 'true' : 'false'); });
+      if (target !== 'workspace') window.scrollTo({top:0, behavior:'smooth'});
     };
     document.querySelectorAll('.page-tab').forEach(tab => tab.addEventListener('click', () => showPage(tab.dataset.page)));
     document.querySelectorAll('[data-page-link]').forEach(link => link.addEventListener('click', event => { event.preventDefault(); showPage(link.dataset.pageLink); document.querySelector(link.getAttribute('href'))?.scrollIntoView({behavior:'smooth'}); }));
@@ -444,12 +498,27 @@ def render_dashboard(test_data: list[dict[str, Any]], outputs_root: Path | None 
     function renderSeeds(){
       const select = $('#seed-select');
       const list = $('#seed-list');
+      const cinemaSelect = $('#cinema-seed-select');
+      const castList = $('#cinema-cast-list');
       if (!select || !list) return;
-      if (!seedCache.length){ select.innerHTML = '<option value="">請先建立或載入種子</option>'; list.innerHTML = '<div class="seed-empty">建立後的聲音種子會出現在這裡。</div>'; setStatus('#generation-status','等待聲音種子'); return; }
+      if (!seedCache.length){
+        select.innerHTML = '<option value="">請先建立或載入種子</option>';
+        if (cinemaSelect) cinemaSelect.innerHTML = select.innerHTML;
+        list.innerHTML = '<div class="seed-empty">建立後的聲音種子會出現在這裡。</div>';
+        if (castList) castList.innerHTML = '<div class="seed-empty">載入聲音種子後可在這裡勾選試鏡。</div>';
+        setStatus('#generation-status','等待聲音種子');
+        return;
+      }
       const selected = select.value;
-      select.innerHTML = '<option value="">請選擇聲音種子</option>' + seedCache.map(seed => `<option value="${escapeHtml(seed.id)}">${escapeHtml(seed.name)} · ${escapeHtml(seed.gender || '不指定')} · ${escapeHtml(seed.kind === 'text_design' ? '文字設計' : '上傳音檔')}</option>`).join('');
+      const cinemaSelected = cinemaSelect?.value || '';
+      const checkedCast = new Set([...document.querySelectorAll('[data-cast-seed]:checked')].map(node => node.value));
+      const optionsHtml = '<option value="">請選擇聲音種子</option>' + seedCache.map(seed => `<option value="${escapeHtml(seed.id)}">${escapeHtml(seed.name)} · ${escapeHtml(seed.gender || '不指定')} · ${escapeHtml(seed.kind === 'text_design' ? '文字設計' : '上傳音檔')}</option>`).join('');
+      select.innerHTML = optionsHtml;
+      if (cinemaSelect) cinemaSelect.innerHTML = optionsHtml;
       if (seedCache.some(seed => seed.id === selected)) select.value = selected;
+      if (cinemaSelect && seedCache.some(seed => seed.id === cinemaSelected)) cinemaSelect.value = cinemaSelected;
       list.innerHTML = seedCache.map(seed => `<div class="seed-card ${seed.id === select.value ? 'active' : ''}" data-seed-card="${escapeHtml(seed.id)}"><div><strong>${escapeHtml(seed.name)}</strong><small>${escapeHtml(seed.gender || '不指定')} · ${escapeHtml(seed.kind === 'text_design' ? '文字設計' : '上傳音檔')} · ${escapeHtml((seed.referenceSha256 || '').slice(0,12))}</small></div><audio controls preload="none" src="${escapeHtml(seed.audioUrl)}"></audio></div>`).join('');
+      if (castList) castList.innerHTML = seedCache.map(seed => `<label class="cast-option ${checkedCast.has(seed.id) ? 'selected' : ''}"><input type="checkbox" data-cast-seed value="${escapeHtml(seed.id)}" ${checkedCast.has(seed.id) ? 'checked' : ''}><span><b>${escapeHtml(seed.name)}</b><small>${escapeHtml(seed.gender || '不指定')} · ${escapeHtml(seed.kind === 'text_design' ? '文字設計' : '上傳音檔')}</small></span><audio controls preload="none" src="${escapeHtml(seed.audioUrl)}"></audio></label>`).join('');
       setStatus('#generation-status', select.value ? '已鎖定聲音種子' : '請選擇聲音種子', select.value ? 'ok' : '');
     }
     async function loadSeeds(){
@@ -458,6 +527,14 @@ def render_dashboard(test_data: list[dict[str, Any]], outputs_root: Path | None 
     }
     document.querySelectorAll('.mode-btn').forEach(button => button.addEventListener('click', () => { seedMode = button.dataset.mode; document.querySelectorAll('.mode-btn').forEach(item => item.classList.toggle('active', item === button)); $('#text-seed-fields').classList.toggle('hidden', seedMode !== 'text_design'); $('#audio-seed-fields').classList.toggle('hidden', seedMode !== 'audio_clone'); const description = $('#seed-description'); if (description) description.required = seedMode === 'text_design'; const advanced = $('#advanced-seed-settings'); if (advanced) advanced.open = true; }));
     $('#seed-select')?.addEventListener('change', renderSeeds);
+    $('#cinema-cast-list')?.addEventListener('change', event => {
+      const checkbox = event.target.closest('[data-cast-seed]');
+      if (!checkbox) return;
+      const checked = [...document.querySelectorAll('[data-cast-seed]:checked')];
+      if (checked.length > 4){ checkbox.checked = false; setStatus('#cinema-status','批次試鏡最多選擇 4 個聲音種子', 'error'); }
+      checkbox.closest('.cast-option')?.classList.toggle('selected', checkbox.checked);
+      if (checkbox.checked && !$('#cinema-seed-select')?.value) $('#cinema-seed-select').value = checkbox.value;
+    });
     $('#seed-form')?.addEventListener('submit', async event => {
       event.preventDefault();
       if (!apiAvailable){ setStatus('#seed-status','請用 run_dashboard.py 啟動本機工作站', 'error'); return; }
@@ -499,10 +576,92 @@ def render_dashboard(test_data: list[dict[str, Any]], outputs_root: Path | None 
       const pendingId = addPendingHistory(seed?.name);
       try { const response = await fetch('/api/generate', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ seedId, emotions, text, ...options }) }); const data = await response.json(); if (!response.ok) throw new Error(data.error || '生成失敗'); const result = data.generation; $('#generated-audio').src = result.url + `?t=${Date.now()}`; $('#generation-result').classList.remove('hidden'); $('#generation-meta').textContent = `已生成 · ${result.gender || '不指定'} · ${result.emotions.join('、') || '平靜'} · ${result.delivery || options.delivery} · ${result.pace || options.pace} · ${Number(result.durationSeconds || 0).toFixed(2)}s${result.durationLimited ? ' · 已套用短台詞長度護欄' : ''} · seed hash ${(result.seedSha256 || '').slice(0,12)} · voice-clone`; finishPendingHistory(pendingId, result, text, emotions, options, seed?.name); setStatus('#generation-status','生成完成，可直接播放或繼續改表演選項重生', 'ok'); } catch (error){ finishPendingHistory(pendingId, null, text, emotions, options, seed?.name, error.message); setStatus('#generation-status', error.message, 'error'); } finally { button.disabled = false; $('#generation-progress')?.classList.add('hidden'); }
     });
+    const loadCinemaTemplate = id => {
+      const template = cinemaTemplateMap.get(id);
+      if (!template) return;
+      activeCinemaTemplate = template;
+      $('#cinema-format-label').textContent = `${template.format} · ${template.genre}`;
+      $('#cinema-scene-title').textContent = template.title;
+      $('#cinema-scene-hook').textContent = template.hook;
+      $('#cinema-circumstance').textContent = template.circumstance;
+      $('#cinema-relationship').textContent = template.relationship;
+      $('#cinema-objective').textContent = template.objective;
+      $('#cinema-subtext').textContent = template.subtext;
+      $('#cinema-text').value = template.text;
+      $('#cinema-shot').value = template.shotScale;
+      $('#cinema-take').value = template.takeStyle;
+      $('#cinema-beats').innerHTML = (template.beats || []).map((beat, index) => `<div class="director-beat"><i>${index + 1}</i><b>${escapeHtml(beat[0])}</b><span>${escapeHtml(beat[1])}</span></div>`).join('');
+      document.querySelectorAll('[data-cinema-card]').forEach(card => card.classList.toggle('active', card.dataset.cinemaCard === id));
+      setStatus('#cinema-status','場景已載入；選擇聲音後可單次生成或批次試鏡','ok');
+    };
+    document.querySelectorAll('.cinema-card-use').forEach(button => button.addEventListener('click', () => { loadCinemaTemplate(button.dataset.cinemaId); $('#director-desk')?.scrollIntoView({behavior:'smooth', block:'start'}); }));
+    const filterRoot = $('#cinema-filter');
+    if (filterRoot){
+      const genres = [...new Set(cinemaTemplates.map(item => item.genre))];
+      filterRoot.innerHTML = ['全部', ...genres].map((genre, index) => `<button type="button" class="${index === 0 ? 'active' : ''}" data-cinema-filter="${escapeHtml(genre)}">${escapeHtml(genre)}</button>`).join('');
+      filterRoot.addEventListener('click', event => { const button = event.target.closest('[data-cinema-filter]'); if (!button) return; const genre = button.dataset.cinemaFilter; filterRoot.querySelectorAll('button').forEach(item => item.classList.toggle('active', item === button)); document.querySelectorAll('[data-cinema-card]').forEach(card => card.classList.toggle('hidden', genre !== '全部' && card.dataset.cinemaGenre !== genre)); });
+    }
+    const cinemaPayload = (seedId, template, text) => ({
+      seedId,
+      text,
+      cinemaTemplateId:template.id,
+      shotScale:$('#cinema-shot').value,
+      takeStyle:$('#cinema-take').value,
+      emotions:template.emotions,
+      intensity:template.intensity,
+      delivery:template.delivery,
+      pace:template.pace,
+      pitch:template.pitch,
+      pause:template.pause,
+      ending:template.ending,
+      performanceNote:template.note,
+    });
+    const generateCinemaTake = async (seedId, template, text) => {
+      const seed = seedCache.find(item => item.id === seedId);
+      if (!seed) throw new Error('找不到指定聲音種子');
+      const options = cinemaPayload(seedId, template, text);
+      const pendingId = addPendingHistory(seed.name);
+      try {
+        const response = await fetch('/api/generate', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(options)});
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || '影視配音生成失敗');
+        const result = data.generation;
+        finishPendingHistory(pendingId, result, text, template.emotions, options, seed.name);
+        return {result, seed};
+      } catch (error){ finishPendingHistory(pendingId, null, text, template.emotions, options, seed.name, error.message); throw error; }
+    };
+    const runCinemaQueue = async seedIds => {
+      if (!activeCinemaTemplate) { setStatus('#cinema-status','請先選擇一個影視場景', 'error'); return; }
+      const text = $('#cinema-text').value.trim();
+      if (!text) { setStatus('#cinema-status','台詞不能為空', 'error'); return; }
+      if (!seedIds.length) { setStatus('#cinema-status','請先選擇聲音種子', 'error'); return; }
+      const singleButton = $('#cinema-generate');
+      const batchButton = $('#cinema-batch');
+      singleButton.disabled = true; batchButton.disabled = true; $('#cinema-progress')?.classList.remove('hidden');
+      let completed = 0; let lastTake = null; const errors = [];
+      for (const seedId of seedIds){
+        const seed = seedCache.find(item => item.id === seedId);
+        setStatus('#cinema-status',`正在生成 ${completed + 1}/${seedIds.length} · ${seed?.name || '聲音種子'}…`);
+        try { lastTake = await generateCinemaTake(seedId, activeCinemaTemplate, text); completed += 1; } catch (error){ errors.push(`${seed?.name || seedId}：${error.message}`); }
+      }
+      if (lastTake){
+        $('#cinema-audio').src = lastTake.result.url + `?t=${Date.now()}`;
+        $('#cinema-result').classList.remove('hidden');
+        const usedTags = lastTake.result.cinema?.usedInlineTags ? '原版句級標籤' : '改寫台詞安全模式';
+        $('#cinema-meta').textContent = `${activeCinemaTemplate.title} · ${lastTake.seed.name} · ${lastTake.result.cinema?.shotScale || $('#cinema-shot').value} · ${lastTake.result.cinema?.takeStyle || $('#cinema-take').value} · ${Number(lastTake.result.durationSeconds || 0).toFixed(2)}s · ${usedTags}`;
+      }
+      if (errors.length) setStatus('#cinema-status',`完成 ${completed}/${seedIds.length}；${errors.join('；')}`, completed ? 'ok' : 'error');
+      else setStatus('#cinema-status',`已完成 ${completed} 個影視配音 take，全部已加入左側紀錄`,'ok');
+      singleButton.disabled = false; batchButton.disabled = false; $('#cinema-progress')?.classList.add('hidden');
+    };
+    $('#cinema-generate')?.addEventListener('click', () => runCinemaQueue([$('#cinema-seed-select').value].filter(Boolean)));
+    $('#cinema-batch')?.addEventListener('click', () => runCinemaQueue([...document.querySelectorAll('[data-cast-seed]:checked')].map(node => node.value).slice(0,4)));
     document.querySelectorAll('.showcase-load').forEach(button => button.addEventListener('click', () => { $('#generation-text').value = button.dataset.text; document.querySelector('#studio').scrollIntoView({behavior:'smooth'}); setStatus('#generation-status','示範台詞已載入；請選擇種子與表演選項後生成', 'ok'); }));
+    if (cinemaTemplates.length) loadCinemaTemplate(cinemaTemplates[0].id);
     loadSeeds();
   </script>
 """
+    script_html = script_html.replace("__CINEMA_TEMPLATES_JSON__", cinema_templates_json)
 
     return f"""<!doctype html>
 <html lang="zh-Hant">

@@ -24,6 +24,7 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from typing import Any
 
+from cinema_templates import get_cinema_template
 from generate_tts_catalog import load_local_env
 from paths import resolve_workspace_root
 from providers.mimo import DEFAULT_BASE_URL, MimoRequestError, request_audio
@@ -42,6 +43,8 @@ PACES = {"慢速", "標準", "快速", "忽快忽慢"}
 PITCHES = {"自然", "自然起伏", "偏低沉", "偏明亮", "先低後高", "先高後低"}
 PAUSES = {"自然停頓", "短停頓", "長停頓", "句尾留白", "斷續哽咽"}
 ENDINGS = {"完整收句", "尾音放輕", "欲言又止", "情緒停住但不截斷"}
+CINEMA_SHOTS = {"電影特寫", "電影近景", "電視劇近景", "電視劇中景"}
+CINEMA_TAKES = {"克制真實", "生活流", "節奏推進", "職人寫實", "古裝含蓄", "史詩克制", "自然青春", "喜劇節拍", "動作壓迫", "年代含蓄"}
 HUMAN_VOICE_GUIDANCE = (
     "自然人聲要求：像真人在同一個房間一次錄製，保留自然呼吸、微小而不規則的停頓、"
     "口語連貫與細微強弱變化；重點字可以輕輕加深，但不要每字等長等重、不要機械升降、"
@@ -119,6 +122,57 @@ def ending_instruction(value: str) -> str:
         "欲言又止": "最後一字停住或微升，留下未說完感，不要低沉拖尾",
         "情緒停住但不截斷": "在情緒位置懸住，保持氣息連續，不要做制式下降",
     }.get(value, "依標點完成收句，不要每句下墜")
+
+
+def cinema_performance(payload: dict[str, Any], text: str) -> tuple[str, str, dict[str, Any] | None]:
+    """Build a playable screen-acting brief from a trusted original template.
+
+    Rich acting directions stay in the user-role context.  Only MiMo-supported
+    inline audio tags enter the assistant-role content, and only while the
+    displayed dialogue is still byte-for-byte the curated original.  As soon
+    as a user edits the line, the edited dialogue is sent cleanly without stale
+    tags or hidden template text.
+    """
+    template = get_cinema_template(str(payload.get("cinemaTemplateId", "")))
+    if not template:
+        return "", text, None
+    requested_shot = str(payload.get("shotScale", "")).strip()
+    requested_take = str(payload.get("takeStyle", "")).strip()
+    shot_scale = requested_shot if requested_shot in CINEMA_SHOTS else str(template["shotScale"])
+    take_style = requested_take if requested_take in CINEMA_TAKES else str(template["takeStyle"])
+    circumstance = str(template["circumstance"]).rstrip("。；; ")
+    relationship = str(template["relationship"]).rstrip("。；; ")
+    objective = str(template["objective"]).rstrip("。；; ")
+    obstacle = str(template["obstacle"]).rstrip("。；; ")
+    subtext = str(template["subtext"]).rstrip("。；; ")
+    beats = template.get("beats", [])
+    beat_score = "；".join(
+        f"第{index}拍「{str(beat[0])[:30]}」：{str(beat[1])[:140]}"
+        for index, beat in enumerate(beats[:4], start=1)
+        if isinstance(beat, (list, tuple)) and len(beat) >= 2
+    )
+    direction = (
+        "影視配音模式：把這段當成鏡頭前正在發生的戲，不是朗誦、廣告、預告片或情緒展示。"
+        f"作品類型：{template['format']}／{template['genre']}；鏡頭距離：{shot_scale}；表演版本：{take_style}。"
+        f"既定情境：{circumstance}；人物關係：{relationship}。"
+        f"人物此刻可執行的目的：{objective}；阻力：{obstacle}。"
+        f"潛台詞：{subtext}。潛台詞只能透過思考、呼吸、重音與停頓被感覺到，不能另加台詞說明。"
+        f"表演節拍：{beat_score}。"
+        "表演規則：每句先有念頭再出聲；接話要像正在聽對手，而不是預先背稿；近景縮小音量與動作，"
+        "情緒峰值只放在真正轉折處。允許自然吸氣、猶豫和不完全對稱的節奏，但咬字必須清楚。"
+        "不要把人物目的、阻力、潛台詞、節拍或括號標籤念出來；不要自行添加旁白、角色名或解釋。"
+    )
+    assistant_text = str(template.get("taggedText", text)) if text == str(template.get("text", "")) else text
+    metadata = {
+        "templateId": template["id"],
+        "title": template["title"],
+        "format": template["format"],
+        "genre": template["genre"],
+        "shotScale": shot_scale,
+        "takeStyle": take_style,
+        "usedInlineTags": assistant_text != text,
+    }
+    return direction, assistant_text, metadata
 
 
 def wav_duration(audio: bytes) -> float:
@@ -361,21 +415,32 @@ def generate_from_seed(payload: dict[str, Any]) -> dict[str, Any]:
     mime = str(record.get("referenceMime", "audio/wav"))
     voice_data_url = f"data:{mime};base64,{base64.b64encode(reference_audio).decode('ascii')}"
     emotion_line = "、".join(emotions) if emotions else "平靜"
-    context = (
-        "這是一個已鎖定的聲音種子。請保持參考音檔的音色身份、年齡、性別、共鳴位置、"
-        "口音與說話習慣，不要重新設計聲線。只改變本次指定的表演情緒。"
-        f"{gender_instruction(gender)} 若參考音檔與性別設定衝突，請優先遵守性別設定；"
-        "若無法同時滿足，請保持清晰，不要變成另一種性別的聲線。"
-        f"{HUMAN_VOICE_GUIDANCE}"
-        f"{prosody_map(text)}"
-        "以下情緒與演繹設定是控制指令，不是台詞，絕對不要朗讀或重複。"
-        f"本次複合情緒：{emotion_line}；情緒強度：{intensity}。"
-        f"演繹方式：{delivery}；語速節奏：{pace}；音高走向：{pitch}（{pitch_instruction(pitch)}）；"
-        f"停頓策略：{pause}；收句方式：{ending}（{ending_instruction(ending)}）。"
-        f"導演補充：{performance_note or '無'}。"
-        "情緒要有層次、語句要清楚，避免過度誇張或破音；只完整朗讀一次台詞，不要重複任何字詞；"
-        "保留句尾但不要拖長，台詞結束後立刻停止，尾部最多保留半秒。"
+    cinema_direction, assistant_text, cinema_metadata = cinema_performance(payload, text)
+    voice_lock = (
+        "這是一個已鎖定的聲音種子。保持參考音檔的音色身份、年齡、性別、共鳴位置、口音與說話習慣，"
+        "不要重新設計聲線，只改變本次表演。"
+        f"{gender_instruction(gender)} 若參考音檔與性別設定衝突，以性別設定優先。"
     )
+    if cinema_metadata:
+        context = (
+            f"{voice_lock}{cinema_direction}"
+            f"整體情緒弧線：{emotion_line}；強度：{intensity}；語速：{pace}；"
+            f"音高原則：{pitch_instruction(pitch)}；收句原則：{ending_instruction(ending)}。"
+            f"導演補充：{(performance_note or '依模板節拍演出').rstrip('。；; ')}。"
+            "只演一次，只說 assistant 訊息中的台詞；內嵌括號與方括號是官方表演／音訊標籤，不得念出。"
+            "不重複任何字詞，不添加前言或尾聲；最後一字完成後停止，尾部最多半秒。"
+        )
+    else:
+        context = (
+            f"{voice_lock}{HUMAN_VOICE_GUIDANCE}{prosody_map(text)}"
+            "以下情緒與演繹設定是控制指令，不是台詞，絕對不要朗讀或重複。"
+            f"本次複合情緒：{emotion_line}；情緒強度：{intensity}。"
+            f"演繹方式：{delivery}；語速節奏：{pace}；音高走向：{pitch}（{pitch_instruction(pitch)}）；"
+            f"停頓策略：{pause}；收句方式：{ending}（{ending_instruction(ending)}）。"
+            f"導演補充：{performance_note or '無'}。"
+            "情緒要有層次、語句要清楚，避免過度誇張或破音；只完整朗讀一次台詞，不要重複任何字詞；"
+            "保留句尾但不要拖長，台詞結束後立刻停止，尾部最多保留半秒。"
+        )
     api_key, base_url = api_key_and_base_url()
     request_kwargs = {
         "api_key": api_key,
@@ -385,7 +450,7 @@ def generate_from_seed(payload: dict[str, Any]) -> dict[str, Any]:
         # Keep the user dialogue isolated.  Control labels belong in context;
         # putting them into `text` makes TTS read the labels aloud and inflates
         # short lines into unexpectedly long takes.
-        "text": text,
+        "text": assistant_text,
         "audio_format": "wav",
         "timeout": 180.0,
         "retries": 2,
@@ -420,14 +485,17 @@ def generate_from_seed(payload: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(manifest, dict):
         manifest = {"schemaVersion": 1, "samples": []}
     manifest.setdefault("samples", [])
+    generation_tags = ["聲音種子", *emotions, delivery, pace]
+    if cinema_metadata:
+        generation_tags = ["影視配音", cinema_metadata["genre"], *emotions]
     manifest["samples"].append({
         "candidateId": generation_id,
         "characterId": record["name"],
         "displayName": record["name"],
         "voiceDisplay": record["name"],
         "gender": gender,
-        "label": "、".join(emotions) or "平靜",
-        "tags": ["聲音種子", *emotions, delivery, pace],
+        "label": cinema_metadata["title"] if cinema_metadata else ("、".join(emotions) or "平靜"),
+        "tags": generation_tags,
         "file": generation_file,
         "text": text,
         "voiceDescription": context,
@@ -446,6 +514,7 @@ def generate_from_seed(payload: dict[str, Any]) -> dict[str, Any]:
         "pause": pause,
         "ending": ending,
         "performanceNote": performance_note,
+        "cinema": cinema_metadata,
     })
     manifest.update({
         "generatedAt": datetime.now(timezone.utc).isoformat(),
@@ -459,7 +528,7 @@ def generate_from_seed(payload: dict[str, Any]) -> dict[str, Any]:
     atomic_write(manifest_path, json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
     write_generation_index(manifest)
     refresh_dashboard()
-    return {
+    result = {
         "id": generation_id,
         "url": f"/voice_generations/{urllib.parse.quote(generation_file)}",
         "seedId": seed_id,
@@ -476,6 +545,9 @@ def generate_from_seed(payload: dict[str, Any]) -> dict[str, Any]:
         "durationLimited": duration_limited,
         "model": "mimo-v2.5-tts-voiceclone",
     }
+    if cinema_metadata:
+        result["cinema"] = cinema_metadata
+    return result
 
 
 def write_generation_index(manifest: dict[str, Any]) -> None:

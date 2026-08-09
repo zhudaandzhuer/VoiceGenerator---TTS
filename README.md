@@ -2,7 +2,7 @@
 
 ![GitHub stars](https://img.shields.io/github/stars/zhudaandzhuer/VoiceGenerator---TTS?style=social)
 ![Python](https://img.shields.io/badge/python-3.10+-3776AB?logo=python&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green)
+![MiMo](https://img.shields.io/badge/TTS-MiMo--V2.5-c86f61)
 
 一套可直接上手的中文語音實驗與生成工作區，已封裝「聲音種子建立、情緒生成、模板復用、首頁展示」完整流程。  
 專案目標是：  
@@ -20,6 +20,11 @@
 - 熱門模板
   - 內建多種熱門情境模板，保留每張模板的示範音
   - 可直接用自己的種子套用模板快速出片
+- 電影／電視劇配音
+  - 14 組原創場景，涵蓋愛情、家庭、商戰、懸疑、醫療、古裝、戰爭、校園、喜劇、科幻、警匪、諜戰與法庭
+  - 每場都有既定情境、人物關係、當下目的、阻力、潛台詞與三段表演節拍
+  - 支援單一聲線快速生成，或勾選最多四個聲音種子做批次試鏡
+  - 原版台詞使用官方句級音訊標籤；改寫台詞會自動切換乾淨模式，避免念出錯置標籤
 - 自動化腳本
   - 批次產生不同角色庫、情緒庫、音色庫
   - 按 manifest 管理輸出，輸出目錄結構清楚
@@ -63,8 +68,8 @@ cd "/Users/yaowei/Documents/GameGod/VoiceGenerator - TTS"
 # 確認依賴與環境
 source scripts/.env
 
-# 建立專案入口頁（可重複執行）
-python3 scripts/run_dashboard.py --no-open
+# 只重建專案入口頁（可重複執行）
+python3 scripts/build_test_dashboard.py
 
 # 只想先起服務，不開啟瀏覽器
 python3 scripts/run_dashboard.py --no-open
@@ -73,6 +78,12 @@ python3 scripts/run_dashboard.py --no-open
 python3 scripts/generate_hot_templates.py
 python3 scripts/build_test_dashboard.py
 python3 scripts/generate_voice_gallery.py
+
+# 離線驗證影視模板與防呆
+python3 scripts/test_cinema_pipeline.py
+
+# 用 MiMo ASR 驗收最新 take：檢查控制字、重複段落與台詞偏離
+python3 scripts/verify_voice_take.py
 ```
 
 ## 目錄結構（對外只保留 `scripts/` 與 `outputs/`）
@@ -98,6 +109,9 @@ python3 scripts/generate_voice_gallery.py
 - `scripts/generate_tts_catalog.py`：官方音色/情緒/腔調清單生成器
 - `scripts/generate_showcase.py`：劇情示範音檔
 - `scripts/generate_production_dialogue.py`：劇本批次生成
+- `scripts/cinema_templates.py`：原創影視場景、人物目的、潛台詞與表演節拍
+- `scripts/test_cinema_pipeline.py`：影視配音離線回歸測試
+- `scripts/verify_voice_take.py`：用 MiMo ASR 驗收生成台詞與控制字洩漏
 
 ## 給按下 Star 的你
 
@@ -110,4 +124,3 @@ python3 scripts/generate_voice_gallery.py
 
 - [小米 MiMo 官方文件](https://github.com/XiaomiMiMo/MiMo-Skills/blob/main/skills/mimo-v2-5-tts/SKILL.md)
 - [小米 MiMo API 使用指南](https://mimo.mi.com/docs/usage-guide/speech-synthesis)
-
