@@ -25,9 +25,20 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 
+from ancient_audio_templates import (
+    BGM_PRESETS,
+    RECITATION_TEMPLATES,
+    ROOM_PRESETS,
+    get_recitation_template,
+    performance_direction as ancient_performance_direction,
+)
+from audio_scene_mixer import ensure_builtin_bgm
+import audio_scene_queue
 from cinema_templates import get_cinema_template
 from dialogue_scene_templates import get_dialogue_scene
 from generate_tts_catalog import load_local_env
+from media_audio_tools import separator_status
+import media_tool_queue
 from paths import resolve_workspace_root
 from providers.mimo import DEFAULT_BASE_URL, MimoRequestError, request_audio
 import seed_asset_system as asset_system
@@ -41,7 +52,7 @@ SEEDS = OUTPUTS / "voice_seeds"
 GENERATIONS = OUTPUTS / "voice_generations"
 DIALOGUE_SCENES = OUTPUTS / "dialogue_scenes"
 DEFAULT_PORT = 8888
-MAX_UPLOAD_BYTES = 10 * 1024 * 1024
+MAX_UPLOAD_BYTES = 260 * 1024 * 1024
 SAFE_ID = re.compile(r"[^a-zA-Z0-9_-]+")
 EMOTIONS = ["怅然", "欣慰", "得意", "無奈", "愧疚", "釋然", "嫉妒", "厭倦", "忐忑", "動情"]
 GENDERS = {"女性", "男性", "中性／不指定", "不指定"}
@@ -63,6 +74,10 @@ HUMAN_VOICE_GUIDANCE = (
 GENERATION_MANIFEST_LOCK = threading.RLock()
 PRODUCTION_QUEUE_LOCK = threading.Lock()
 PRODUCTION_QUEUE: production_queue.ProductionQueue | None = None
+AUDIO_SCENE_QUEUE_LOCK = threading.Lock()
+AUDIO_SCENE_QUEUE: audio_scene_queue.AudioSceneQueue | None = None
+MEDIA_TOOL_QUEUE_LOCK = threading.Lock()
+MEDIA_TOOL_QUEUE: media_tool_queue.MediaToolQueue | None = None
 
 
 def prosody_map(text: str) -> str:
@@ -528,7 +543,7 @@ def generate_from_seed(payload: dict[str, Any]) -> dict[str, Any]:
     pitch = normalize_option(payload.get("pitch"), PITCHES, "自然")
     pause = normalize_option(payload.get("pause"), PAUSES, "自然停頓")
     ending = normalize_option(payload.get("ending"), ENDINGS, "完整收句")
-    performance_note = str(payload.get("performanceNote") or (performance_seed or {}).get("note", "")).strip()[:500]
+    performance_note = str(payload.get("performanceNote") or (performance_seed or {}).get("note", "")).strip()[:1200]
     if not seed_id or not text:
         raise ValueError("生成語音需要聲音種子與台詞")
     if len(text) > 8000:
@@ -539,12 +554,27 @@ def generate_from_seed(payload: dict[str, Any]) -> dict[str, Any]:
     record, gender, voice_data_url = load_seed_reference(seed_id, anchor_id, anchor_modes)
     emotion_line = "、".join(emotions) if emotions else "平靜"
     cinema_direction, assistant_text, cinema_metadata = cinema_performance(payload, text)
+    ancient_metadata = None
+    ancient_direction = ""
+    ancient_template_id = str(payload.get("ancientRecitationTemplateId", "")).strip()
+    if ancient_template_id:
+        ancient_direction, ancient_metadata = ancient_performance_direction(ancient_template_id, text)
+        assistant_text = text
     voice_lock = (
         "這是一個已鎖定的聲音種子。保持參考音檔的音色身份、年齡、性別、共鳴位置、口音與說話習慣，"
         "不要重新設計聲線，只改變本次表演。"
         f"{gender_instruction(gender)} 若參考音檔與性別設定衝突，以性別設定優先。"
     )
-    if cinema_metadata:
+    if ancient_metadata:
+        context = (
+            f"{voice_lock}{HUMAN_VOICE_GUIDANCE}{ancient_direction}{prosody_map(text)}"
+            f"整體強度：{intensity}；語速節奏：{pace}；音高原則：{pitch_instruction(pitch)}；"
+            f"停頓策略：{pause}；收句原則：{ending_instruction(ending)}。"
+            f"補充要求：{performance_note or '依逐句表演譜自然完成'}。"
+            "控制指令全部留在表演脈絡，絕對不得念出。只說 assistant 訊息中的原始台詞一次，"
+            "不重複、不續寫；最後一字完成後停止，尾部最多半秒。"
+        )
+    elif cinema_metadata:
         context = (
             f"{voice_lock}{cinema_direction}"
             f"整體情緒弧線：{emotion_line}；強度：{intensity}；語速：{pace}；"
@@ -629,7 +659,9 @@ def generate_from_seed(payload: dict[str, Any]) -> dict[str, Any]:
         "method": "wespeaker-embedding-gate-v1" if embedding_gate.get("available") else "local-signal-gate-v1",
     }
     generation_tags = ["聲音種子", *emotions, delivery, pace]
-    if cinema_metadata:
+    if ancient_metadata:
+        generation_tags = ["古人說詞", ancient_metadata["templateName"], *emotions]
+    elif cinema_metadata:
         generation_tags = ["影視配音", cinema_metadata["genre"], *emotions]
     generation_record = {
         "candidateId": generation_id,
@@ -663,6 +695,7 @@ def generate_from_seed(payload: dict[str, Any]) -> dict[str, Any]:
         "ending": ending,
         "performanceNote": performance_note,
         "cinema": cinema_metadata,
+        "ancientRecitation": ancient_metadata,
     }
     record_generation(generation_record)
     result = {
@@ -689,6 +722,8 @@ def generate_from_seed(payload: dict[str, Any]) -> dict[str, Any]:
     }
     if cinema_metadata:
         result["cinema"] = cinema_metadata
+    if ancient_metadata:
+        result["ancientRecitation"] = ancient_metadata
     return result
 
 
@@ -721,6 +756,48 @@ def queue_manager() -> production_queue.ProductionQueue:
         if PRODUCTION_QUEUE is None:
             PRODUCTION_QUEUE = production_queue.ProductionQueue(OUTPUTS, generate_from_seed)
         return PRODUCTION_QUEUE
+
+
+def _audio_scene_voice_worker(request: dict[str, Any]) -> tuple[Path, dict[str, Any]]:
+    """Generate one locked ancient-recitation take for the audio-scene queue."""
+    template = get_recitation_template(str(request.get("recitationTemplateId", "")))
+    if not template:
+        raise ValueError("找不到指定古人說詞模板")
+    result = generate_from_seed({
+        "seedId": request.get("seedId"),
+        "text": request.get("text"),
+        "ancientRecitationTemplateId": template["id"],
+        "emotions": template["emotions"],
+        "intensity": template["intensity"],
+        "delivery": "古裝台詞",
+        "pace": template["pace"],
+        "pitch": template["pitch"],
+        "pause": template["pause"],
+        "ending": template["ending"],
+        "performanceNote": template["note"],
+    })
+    filename = Path(urllib.parse.unquote(urllib.parse.urlparse(str(result["url"])).path)).name
+    voice_path = GENERATIONS / filename
+    if not voice_path.is_file():
+        raise RuntimeError("乾人聲已生成，但找不到落盤音檔")
+    result["seedName"] = str(request.get("seedName", ""))
+    return voice_path, result
+
+
+def audio_scene_manager() -> audio_scene_queue.AudioSceneQueue:
+    global AUDIO_SCENE_QUEUE
+    with AUDIO_SCENE_QUEUE_LOCK:
+        if AUDIO_SCENE_QUEUE is None:
+            AUDIO_SCENE_QUEUE = audio_scene_queue.AudioSceneQueue(OUTPUTS, _audio_scene_voice_worker)
+        return AUDIO_SCENE_QUEUE
+
+
+def media_tool_manager() -> media_tool_queue.MediaToolQueue:
+    global MEDIA_TOOL_QUEUE
+    with MEDIA_TOOL_QUEUE_LOCK:
+        if MEDIA_TOOL_QUEUE is None:
+            MEDIA_TOOL_QUEUE = media_tool_queue.MediaToolQueue(OUTPUTS)
+        return MEDIA_TOOL_QUEUE
 
 
 def _dialogue_scene_summary(manifest: dict[str, Any]) -> dict[str, Any]:
@@ -1010,6 +1087,8 @@ class StudioHandler(SimpleHTTPRequestHandler):
                     "jobCount": len(jobs),
                     "activeCount": sum(job.get("status") in {"queued", "running", "cancelling"} for job in jobs),
                 },
+                "audioScenes": {"items": len(audio_scene_manager().list()), "bgmPresets": len(BGM_PRESETS)},
+                "mediaAudio": separator_status(),
             })
             return
         if path == "/api/seeds":
@@ -1018,7 +1097,36 @@ class StudioHandler(SimpleHTTPRequestHandler):
         if path == "/api/studio/overview":
             overview = asset_system.studio_overview(OUTPUTS)
             overview["productionJobs"] = queue_manager().list()
+            overview["audioScenes"] = audio_scene_manager().list()
+            overview["mediaAudioJobs"] = media_tool_manager().list()
+            overview["mediaAudio"] = separator_status()
+            overview["counts"]["audioScenes"] = len(overview["audioScenes"])
+            overview["counts"]["mediaAudioJobs"] = len(overview["mediaAudioJobs"])
             self.send_json(200, overview)
+            return
+        if path == "/api/audio-scene/catalog":
+            self.send_json(200, {
+                "recitationTemplates": RECITATION_TEMPLATES,
+                "bgmPresets": ensure_builtin_bgm(OUTPUTS),
+                "roomPresets": ROOM_PRESETS,
+            })
+            return
+        if path == "/api/audio-scenes":
+            self.send_json(200, {"items": audio_scene_manager().list()})
+            return
+        audio_scene_match = re.fullmatch(r"/api/audio-scenes/([^/]+)", path)
+        if audio_scene_match:
+            self.send_json(200, {"scene": audio_scene_manager().get(urllib.parse.unquote(audio_scene_match.group(1)))})
+            return
+        if path == "/api/media-audio/status":
+            self.send_json(200, separator_status())
+            return
+        if path == "/api/media-audio/jobs":
+            self.send_json(200, {"items": media_tool_manager().list(), "separator": separator_status()})
+            return
+        media_job_match = re.fullmatch(r"/api/media-audio/jobs/([^/]+)", path)
+        if media_job_match:
+            self.send_json(200, {"job": media_tool_manager().get(urllib.parse.unquote(media_job_match.group(1)))})
             return
         if path == "/api/speaker-embedding/status":
             self.send_json(200, speaker_embedding.runtime_status())
@@ -1067,6 +1175,24 @@ class StudioHandler(SimpleHTTPRequestHandler):
                 return
             if parsed.path == "/api/production-jobs":
                 result = queue_manager().submit(payload)
+                self.send_json(202, {"ok": True, "job": result})
+                return
+            if parsed.path == "/api/audio-scenes":
+                result = audio_scene_manager().submit(payload)
+                self.send_json(202, {"ok": True, "scene": result})
+                return
+            audio_scene_retry = re.fullmatch(r"/api/audio-scenes/([^/]+)/retry", parsed.path)
+            if audio_scene_retry:
+                result = audio_scene_manager().retry(urllib.parse.unquote(audio_scene_retry.group(1)))
+                self.send_json(202, {"ok": True, "scene": result})
+                return
+            if parsed.path == "/api/media-audio/jobs":
+                result = media_tool_manager().submit(payload)
+                self.send_json(202, {"ok": True, "job": result})
+                return
+            media_retry = re.fullmatch(r"/api/media-audio/jobs/([^/]+)/retry", parsed.path)
+            if media_retry:
+                result = media_tool_manager().retry(urllib.parse.unquote(media_retry.group(1)))
                 self.send_json(202, {"ok": True, "job": result})
                 return
             job_action = re.fullmatch(r"/api/production-jobs/([^/]+)/(cancel|retry)", parsed.path)
@@ -1141,7 +1267,10 @@ def run_server(host: str = "127.0.0.1", port: int = DEFAULT_PORT) -> None:
     GENERATIONS.mkdir(parents=True, exist_ok=True)
     DIALOGUE_SCENES.mkdir(parents=True, exist_ok=True)
     asset_system.ensure_layout(OUTPUTS)
+    ensure_builtin_bgm(OUTPUTS)
     queue_manager()
+    audio_scene_manager()
+    media_tool_manager()
     existing_manifest = load_json(GENERATIONS / "manifest.json", None)
     if isinstance(existing_manifest, dict):
         changed = False
@@ -1177,6 +1306,8 @@ def run_server(host: str = "127.0.0.1", port: int = DEFAULT_PORT) -> None:
     finally:
         server.server_close()
         queue_manager().shutdown()
+        audio_scene_manager().shutdown()
+        media_tool_manager().shutdown()
 
 
 if __name__ == "__main__":

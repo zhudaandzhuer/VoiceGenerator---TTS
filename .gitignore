@@ -1,3 +1,9 @@
 .DS_Store
 scripts/.env
 outputs/models/**/*.onnx
+
+# Runtime media and generated audio are local deliverables, not source assets.
+outputs/audio_scene_assets/
+outputs/audio_scenes/
+outputs/media_audio_jobs/
+outputs/voice_generations/take_*.wav

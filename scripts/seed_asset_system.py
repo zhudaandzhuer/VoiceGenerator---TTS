@@ -752,5 +752,5 @@ def studio_overview(outputs: Path) -> dict[str, Any]:
         "recentGenerations": list(reversed(generations[-18:])),
         "recentScenes": scene_items[:8],
         "speakerEmbedding": speaker_embedding.runtime_status(),
-        "capabilities": ["聲音護照", "多錨點", "版本血統", "表演種子", "WeSpeaker 聲紋", "保真門禁", "角色選角", "場景連戲", "voicepack"],
+        "capabilities": ["聲音護照", "多錨點", "版本血統", "表演種子", "WeSpeaker 聲紋", "保真門禁", "角色選角", "場景連戲", "古風聲音音景", "配樂自動避讓", "媒體轉 MP3", "AI 去人聲", "voicepack"],
     }

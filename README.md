@@ -49,6 +49,17 @@
   - 原版台詞使用官方句級音訊標籤；改寫台詞會自動切換乾淨模式，避免念出錯置標籤
   - 6 組雙人對手戲：A／B 角色各自鎖定聲音種子，依接話反應逐句生成，再自動插入留白並合成完整場景
   - 每句同時保存獨立 WAV；不滿意時可只重生該句，完整場景會立即重新合成
+- 古風聲音劇場（純音訊）
+  - 聲音種子鎖定人物，古人說詞模板提供逐句情緒、語調與呼吸節拍
+  - 內建 4 組本機演算法原創古風配樂，也能上傳自己的 WAV／MP3／M4A
+  - 背景音樂會由實際人聲觸發 8:1 自動避讓；短房間反射、大殿、石亭、曠野等空間獨立選擇
+  - 同時交付乾人聲、空間人聲、48 kHz WAV 母帶、256 kbps MP3 與完整 `scene.json`
+  - 母帶目標約 −16 LUFS／−1.5 dBTP，避免配樂吃字與峰值爆音
+- 媒體音訊工具
+  - MP4／MOV／MKV／WebM／MP3／WAV／M4A 等格式轉 256 kbps MP3
+  - Demucs 4 模型式人聲／BGM 分離，單聲道來源也能處理，不用左右聲道相消冒充去人聲
+  - 去人聲 BGM 可一鍵帶回古風聲音劇場繼續配詞、配聲音
+  - 轉檔與分離都是持久化任務，輸出原音 MP3、人聲 WAV／MP3、BGM WAV／MP3
 - 自動化腳本
   - 批次產生不同角色庫、情緒庫、音色庫
   - 按 manifest 管理輸出，輸出目錄結構清楚
@@ -96,6 +107,9 @@ source scripts/.env
 # 安裝本地聲紋驗證依賴並下載校驗過的固定版 WeSpeaker 模型
 python3 scripts/setup_speaker_embedding.py
 
+# 安裝 MP3／影片人聲分離模型（第一次分離會自動下載 htdemucs 權重）
+python3 scripts/setup_audio_tools.py
+
 # 只重建專案入口頁（可重複執行）
 python3 scripts/build_test_dashboard.py
 
@@ -129,6 +143,9 @@ python3 scripts/verify_voice_take.py --audio outputs/dialogue_scenes/<scene-id>/
   - `outputs/voice_seeds/*/passport.json`：聲音護照、錨點與版本血統
   - `outputs/voice_generations/*`：正式生成結果
   - `outputs/dialogue_scenes/*`：雙人場景、逐句 WAV、完整 scene.wav 與可追溯 scene.json
+  - `outputs/audio_scenes/*`：古人說詞乾聲、配樂 WAV／MP3 母帶與音景 manifest
+  - `outputs/audio_scene_assets/bgm/*`：本機演算法原創古風配樂庫
+  - `outputs/media_audio_jobs/*`：MP4→MP3、人聲與 BGM 分離結果
   - `outputs/performance_seeds/*`：自訂表演種子
   - `outputs/continuity_projects/*`：連戲專案與製作 manifest
   - `outputs/quality_reports/*`：保真認證報告
@@ -141,6 +158,12 @@ python3 scripts/verify_voice_take.py --audio outputs/dialogue_scenes/<scene-id>/
 
 - `scripts/run_dashboard.py`：一鍵啟動工作台
 - `scripts/voice_studio_server.py`：本機 API 與生成功能
+- `scripts/ancient_audio_templates.py`：古人說詞逐句表演譜、配樂與空間預設
+- `scripts/audio_scene_mixer.py`：配樂避讓、空間效果、WAV／MP3 母帶與音訊 QC
+- `scripts/audio_scene_queue.py`：古風聲音音景持久化任務
+- `scripts/media_audio_tools.py`：MP4→MP3 與 Demucs 模型式人聲分離
+- `scripts/media_tool_queue.py`：媒體音訊持久化任務
+- `scripts/setup_audio_tools.py`：安裝固定版 Demucs 4.0.1
 - `scripts/production_queue.py`：可恢復、可取消、可重試的持久化製作佇列
 - `scripts/seed_asset_system.py`：護照、多錨點、版本、表演種子、認證、選角與 voicepack
 - `scripts/speaker_embedding.py`：WeSpeaker ONNX speaker embedding 與保真門禁
