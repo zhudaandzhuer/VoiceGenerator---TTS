@@ -44,6 +44,7 @@ VARIANT_GROUPS = [
     "親亲", "認认", "燈灯", "賣卖", "責责", "調调", "條条", "種种", "層层", "類类",
     "額额", "現现", "潛潜", "詞词", "緒绪", "導导", "員员", "傷伤", "搶抢", "險险",
     "夢梦", "從从", "經经", "終终", "無无", "萬万", "長长", "隨随", "歲岁", "聽听",
+    "妳你", "換换",
 ]
 VARIANT_TRANSLATION = str.maketrans({character: group[-1] for group in VARIANT_GROUPS for character in group})
 
@@ -116,9 +117,15 @@ def transcribe(root: Path, audio_path: Path) -> str:
 def main() -> int:
     args = parse_args()
     root = args.project_root.resolve()
-    latest_audio, latest_expected, sample = latest_take(root)
-    audio_path = args.audio.resolve() if args.audio else latest_audio
-    expected = args.expected if args.expected is not None else latest_expected
+    sample: dict[str, Any] = {}
+    if args.audio:
+        audio_path = args.audio.resolve()
+        if args.expected is None:
+            raise RuntimeError("指定 --audio 時也請用 --expected 提供該音檔台詞")
+        expected = args.expected
+    else:
+        audio_path, latest_expected, sample = latest_take(root)
+        expected = args.expected if args.expected is not None else latest_expected
     transcript = transcribe(root, audio_path)
     expected_norm = normalize(expected)
     transcript_norm = normalize(transcript)

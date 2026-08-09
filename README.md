@@ -25,6 +25,8 @@
   - 每場都有既定情境、人物關係、當下目的、阻力、潛台詞與三段表演節拍
   - 支援單一聲線快速生成，或勾選最多四個聲音種子做批次試鏡
   - 原版台詞使用官方句級音訊標籤；改寫台詞會自動切換乾淨模式，避免念出錯置標籤
+  - 6 組雙人對手戲：A／B 角色各自鎖定聲音種子，依接話反應逐句生成，再自動插入留白並合成完整場景
+  - 每句同時保存獨立 WAV；不滿意時可只重生該句，完整場景會立即重新合成
 - 自動化腳本
   - 批次產生不同角色庫、情緒庫、音色庫
   - 按 manifest 管理輸出，輸出目錄結構清楚
@@ -81,9 +83,13 @@ python3 scripts/generate_voice_gallery.py
 
 # 離線驗證影視模板與防呆
 python3 scripts/test_cinema_pipeline.py
+python3 scripts/test_dialogue_scene_pipeline.py
 
 # 用 MiMo ASR 驗收最新 take：檢查控制字、重複段落與台詞偏離
 python3 scripts/verify_voice_take.py
+
+# 驗收指定音檔（指定音檔時必須同時提供預期台詞）
+python3 scripts/verify_voice_take.py --audio outputs/dialogue_scenes/<scene-id>/scene.wav --expected "完整台詞"
 ```
 
 ## 目錄結構（對外只保留 `scripts/` 與 `outputs/`）
@@ -96,6 +102,7 @@ python3 scripts/verify_voice_take.py
   - `outputs/index.html`：總覽首頁（歷史、模板、音檔）
   - `outputs/voice_seeds/*`：種子與設定紀錄
   - `outputs/voice_generations/*`：正式生成結果
+  - `outputs/dialogue_scenes/*`：雙人場景、逐句 WAV、完整 scene.wav 與可追溯 scene.json
   - `outputs/hot_templates/*`：熱門模板示範
 
 ## 支援腳本一覽
@@ -110,8 +117,19 @@ python3 scripts/verify_voice_take.py
 - `scripts/generate_showcase.py`：劇情示範音檔
 - `scripts/generate_production_dialogue.py`：劇本批次生成
 - `scripts/cinema_templates.py`：原創影視場景、人物目的、潛台詞與表演節拍
+- `scripts/dialogue_scene_templates.py`：六組原創雙人對手戲、A／B 角色目的、接話反應與逐句留白
 - `scripts/test_cinema_pipeline.py`：影視配音離線回歸測試
+- `scripts/test_dialogue_scene_pipeline.py`：雙人選角、逐句生成、WAV 合成與防呆回歸測試
 - `scripts/verify_voice_take.py`：用 MiMo ASR 驗收生成台詞與控制字洩漏
+
+## 雙人對手戲工作流
+
+1. 開啟「電影／電視劇配音」分頁，在「雙人對手戲組裝台」選一場戲。
+2. 分別替 A、B 角色指定不同聲音種子，並選擇對手反應留白。
+3. 點擊「生成完整雙人場景」；完成後可播放或下載完整 WAV，也能逐句試聽。
+4. 某一句表演不對時，點擊「只重生這一句」。系統只重做該 take，其他句不動，並重建完整場景。
+
+專案附帶一場實際 API＋ASR 驗收成品：`outputs/dialogue_scenes/scene_20260809_020345_rain-platform-choice_18ef825652/`。完整場景 ASR 相似度 97.01%，未偵測到控制詞洩漏或重複段落。
 
 ## 給按下 Star 的你
 

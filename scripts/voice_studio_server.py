@@ -25,6 +25,7 @@ from pathlib import Path
 from typing import Any
 
 from cinema_templates import get_cinema_template
+from dialogue_scene_templates import get_dialogue_scene
 from generate_tts_catalog import load_local_env
 from paths import resolve_workspace_root
 from providers.mimo import DEFAULT_BASE_URL, MimoRequestError, request_audio
@@ -34,6 +35,7 @@ ROOT = resolve_workspace_root()
 OUTPUTS = ROOT / "outputs"
 SEEDS = OUTPUTS / "voice_seeds"
 GENERATIONS = OUTPUTS / "voice_generations"
+DIALOGUE_SCENES = OUTPUTS / "dialogue_scenes"
 MAX_UPLOAD_BYTES = 10 * 1024 * 1024
 SAFE_ID = re.compile(r"[^a-zA-Z0-9_-]+")
 EMOTIONS = ["怅然", "欣慰", "得意", "無奈", "愧疚", "釋然", "嫉妒", "厭倦", "忐忑", "動情"]
@@ -185,6 +187,126 @@ def duration_limit(text: str) -> float:
     """Keep generated speech proportional to the amount of written dialogue."""
     spoken_chars = len(re.findall(r"[\u4e00-\u9fffA-Za-z0-9]", text))
     return max(8.0, min(52.0, 4.0 + spoken_chars * 0.65))
+
+
+def load_seed_reference(seed_id: str) -> tuple[dict[str, Any], str, str]:
+    """Load one locked seed and return its record, gender and data URL."""
+    seed_id = str(seed_id).strip()
+    seed_dir = SEEDS / safe_slug(seed_id)
+    record = load_json(seed_dir / "seed.json", None)
+    if not isinstance(record, dict) or record.get("id") != seed_id:
+        raise ValueError("找不到指定聲音種子")
+    reference_file = str(record.get("referenceFile", ""))
+    reference_path = seed_dir / reference_file
+    if not reference_path.exists():
+        raise ValueError("聲音種子的參考音檔不存在")
+    reference_audio = reference_path.read_bytes()
+    mime = str(record.get("referenceMime", "audio/wav"))
+    data_url = f"data:{mime};base64,{base64.b64encode(reference_audio).decode('ascii')}"
+    return record, normalize_gender(record.get("gender")), data_url
+
+
+def synthesize_locked_take(*, seed_id: str, text: str, assistant_text: str, context: str) -> tuple[bytes, dict[str, Any]]:
+    """Generate one voice-locked WAV with retry and deterministic length guards."""
+    record, gender, voice_data_url = load_seed_reference(seed_id)
+    voice_lock = (
+        "這是一個已鎖定的聲音種子。保持參考音檔的音色身份、年齡、性別、共鳴位置、口音與說話習慣，"
+        "不得因角色、情緒或場景重新設計聲線，只改變本次表演。"
+        f"{gender_instruction(gender)} 若參考音檔與性別設定衝突，以性別設定優先。"
+    )
+    api_key, base_url = api_key_and_base_url()
+    request_kwargs = {
+        "api_key": api_key,
+        "base_url": base_url,
+        "model": "mimo-v2.5-tts-voiceclone",
+        "context": voice_lock + context,
+        "text": assistant_text,
+        "audio_format": "wav",
+        "timeout": 180.0,
+        "retries": 2,
+        "voice": voice_data_url,
+    }
+    audio = request_audio(**request_kwargs)
+    max_duration = duration_limit(text)
+    original_duration = wav_duration(audio)
+    if original_duration > max_duration * 1.25:
+        retry_kwargs = dict(request_kwargs)
+        retry_kwargs["context"] = (
+            request_kwargs["context"]
+            + f"這句預計不超過約 {max_duration:.0f} 秒；只說一次，不得重複、續寫或補充。"
+            "最後一字完成後立刻停止，尾部最多半秒。"
+        )
+        retry_audio = request_audio(**retry_kwargs)
+        if wav_duration(retry_audio) < original_duration:
+            audio = retry_audio
+    selected_duration = wav_duration(audio)
+    audio, duration_seconds = trim_wav(audio, max_duration)
+    return audio, {
+        "record": record,
+        "gender": gender,
+        "durationSeconds": round(duration_seconds, 3),
+        "originalDurationSeconds": round(original_duration, 3),
+        "durationLimited": duration_seconds + 0.05 < selected_duration,
+    }
+
+
+def dialogue_turn_context(scene: dict[str, Any], turn_index: int) -> tuple[str, str]:
+    """Build a turn-specific acting brief and trusted assistant text."""
+    turns = scene.get("turns", [])
+    if turn_index < 0 or turn_index >= len(turns):
+        raise ValueError("對白回合不存在")
+    turn = turns[turn_index]
+    role_key = str(turn.get("role", ""))
+    role = scene.get("roles", {}).get(role_key)
+    if not isinstance(role, dict):
+        raise ValueError("場景角色設定不完整")
+    previous = turns[turn_index - 1] if turn_index else None
+    previous_cue = str(previous.get("text", "")) if isinstance(previous, dict) else "場景開始前已經看見對方"
+    text = str(turn.get("text", "")).strip()
+    assistant_text = str(turn.get("taggedText", text)).strip() or text
+    context = (
+        "雙人影視對手戲模式：這是一個逐句錄製的 take，但人物必須像正在同一空間聽見對手後才開口；"
+        "不是朗誦、配音展示、預告旁白或獨立情緒樣本。"
+        f"場景：{scene['format']}／{scene['genre']}《{scene['title']}》；情境：{scene['circumstance']}；"
+        f"關係：{scene['relationship']}；鏡頭：{scene['shotScale']}；表演版本：{scene['takeStyle']}。"
+        f"你只扮演角色 {role['name']}；人物目的：{role['objective']}；潛台詞：{role['subtext']}。"
+        f"上一個聽覺提示：{previous_cue}；接話反應：{turn.get('listen', '先聽再說')}。"
+        f"本句情緒：{turn.get('emotion', '自然')}；本句導演要求：{turn.get('direction', '自然接話')}。"
+        f"{HUMAN_VOICE_GUIDANCE}{prosody_map(text)}"
+        "每句先有接收到對方的反應，再開口；不要補演對手台詞、角色名、情境、目的、潛台詞、情緒或導演要求。"
+        "括號與方括號若出現在 assistant 訊息中，只是官方表演／音訊標籤，不得念出。"
+        "只演本句一次，不重複、不續寫、不加前言或尾聲；最後一字完成後停止，尾部最多半秒。"
+    )
+    return context, assistant_text
+
+
+def stitch_wav_lines(lines: list[bytes], pauses: list[float]) -> tuple[bytes, float]:
+    """Join compatible PCM WAV takes and insert exact silence between turns."""
+    if not lines or len(lines) != len(pauses):
+        raise ValueError("場景音訊或停頓資料不完整")
+    params = None
+    joined = bytearray()
+    for audio, pause_seconds in zip(lines, pauses):
+        with wave.open(io.BytesIO(audio), "rb") as source:
+            current = source.getparams()
+            frames = source.readframes(source.getnframes())
+        signature = (current.nchannels, current.sampwidth, current.framerate, current.comptype)
+        if params is None:
+            params = current
+            expected = signature
+        elif signature != expected:
+            raise ValueError("各句 WAV 格式不同，無法安全合併；請重新生成本場景")
+        joined.extend(frames)
+        silence_frames = max(0, int(current.framerate * max(0.0, pause_seconds)))
+        joined.extend(b"\x00" * silence_frames * current.nchannels * current.sampwidth)
+    assert params is not None
+    output = io.BytesIO()
+    with wave.open(output, "wb") as target:
+        target.setparams(params)
+        target.writeframes(bytes(joined))
+    frame_bytes = params.nchannels * params.sampwidth
+    duration = len(joined) / frame_bytes / params.framerate
+    return output.getvalue(), round(duration, 3)
 
 
 def trim_wav(audio: bytes, max_seconds: float) -> tuple[bytes, float]:
@@ -550,6 +672,225 @@ def generate_from_seed(payload: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
+def _dialogue_scene_summary(manifest: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "id": manifest["id"],
+        "templateId": manifest["templateId"],
+        "title": manifest["title"],
+        "format": manifest["format"],
+        "genre": manifest["genre"],
+        "createdAt": manifest["createdAt"],
+        "updatedAt": manifest["updatedAt"],
+        "durationSeconds": manifest["durationSeconds"],
+        "lineCount": len(manifest.get("lines", [])),
+        "sceneFile": f"{manifest['id']}/scene.wav",
+        "roles": manifest.get("roles", {}),
+    }
+
+
+def update_dialogue_catalog(manifest: dict[str, Any]) -> None:
+    catalog_path = DIALOGUE_SCENES / "manifest.json"
+    catalog = load_json(catalog_path, {"schemaVersion": 1, "scenes": []})
+    if not isinstance(catalog, dict):
+        catalog = {"schemaVersion": 1, "scenes": []}
+    scenes = [item for item in catalog.get("scenes", []) if isinstance(item, dict) and item.get("id") != manifest["id"]]
+    scenes.append(_dialogue_scene_summary(manifest))
+    scenes.sort(key=lambda item: str(item.get("updatedAt", "")), reverse=True)
+    catalog.update({
+        "schemaVersion": 1,
+        "galleryTitle": "雙人對手戲",
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "sceneCount": len(scenes),
+        "scenes": scenes,
+    })
+    atomic_write(catalog_path, json.dumps(catalog, ensure_ascii=False, indent=2) + "\n")
+
+
+def rebuild_dialogue_scene_audio(scene_dir: Path, manifest: dict[str, Any]) -> None:
+    audio_lines: list[bytes] = []
+    pauses: list[float] = []
+    for line in manifest.get("lines", []):
+        line_path = scene_dir / str(line.get("file", ""))
+        if not line_path.exists():
+            raise ValueError(f"場景缺少第 {int(line.get('index', 0)) + 1} 句音檔")
+        audio_lines.append(line_path.read_bytes())
+        pauses.append(float(line.get("pauseAfterSeconds", 0.0)))
+    scene_audio, duration_seconds = stitch_wav_lines(audio_lines, pauses)
+    atomic_write(scene_dir / "scene.wav", scene_audio)
+    manifest["durationSeconds"] = duration_seconds
+    manifest["sha256"] = hashlib.sha256(scene_audio).hexdigest()
+    manifest["updatedAt"] = datetime.now(timezone.utc).isoformat()
+    atomic_write(scene_dir / "scene.json", json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
+    update_dialogue_catalog(manifest)
+
+
+def generate_dialogue_scene(payload: dict[str, Any]) -> dict[str, Any]:
+    """Generate all turns of one two-character scene and a stitched master."""
+    template_id = str(payload.get("sceneTemplateId", "")).strip()
+    scene = get_dialogue_scene(template_id)
+    if not scene:
+        raise ValueError("找不到指定雙人場景")
+    role_seeds = payload.get("roleSeeds", {})
+    if not isinstance(role_seeds, dict):
+        raise ValueError("請為 A、B 角色指定聲音種子")
+    cast: dict[str, str] = {}
+    for role_key in scene.get("roles", {}):
+        seed_id = str(role_seeds.get(role_key, "")).strip()
+        if not seed_id:
+            raise ValueError(f"角色 {role_key} 尚未指定聲音種子")
+        load_seed_reference(seed_id)
+        cast[role_key] = seed_id
+    if len(set(cast.values())) != len(cast):
+        raise ValueError("雙人對手戲請為 A、B 選擇不同聲音種子")
+    try:
+        pause_scale = float(payload.get("pauseScale", 1.0))
+    except (TypeError, ValueError) as exc:
+        raise ValueError("對手戲停頓倍率無效") from exc
+    pause_scale = min(1.75, max(0.5, pause_scale))
+    identity = json.dumps({"template": template_id, "cast": cast, "pause": pause_scale}, sort_keys=True).encode("utf-8")
+    scene_id = now_id("scene", template_id, identity + os.urandom(8))
+    scene_dir = DIALOGUE_SCENES / scene_id
+    lines_dir = scene_dir / "lines"
+    lines_dir.mkdir(parents=True, exist_ok=False)
+    created_at = datetime.now(timezone.utc).isoformat()
+    role_manifest: dict[str, Any] = {}
+    for role_key, role in scene["roles"].items():
+        seed_record, seed_gender, _ = load_seed_reference(cast[role_key])
+        role_manifest[role_key] = {
+            "name": role["name"],
+            "suggestedGender": role.get("gender", "不指定"),
+            "seedId": cast[role_key],
+            "seedName": seed_record.get("name", cast[role_key]),
+            "seedGender": seed_gender,
+            "seedSha256": seed_record.get("referenceSha256"),
+        }
+    manifest: dict[str, Any] = {
+        "schemaVersion": 1,
+        "id": scene_id,
+        "templateId": template_id,
+        "title": scene["title"],
+        "format": scene["format"],
+        "genre": scene["genre"],
+        "hook": scene["hook"],
+        "circumstance": scene["circumstance"],
+        "relationship": scene["relationship"],
+        "shotScale": scene["shotScale"],
+        "takeStyle": scene["takeStyle"],
+        "pauseScale": pause_scale,
+        "roles": role_manifest,
+        "model": "mimo-v2.5-tts-voiceclone",
+        "createdAt": created_at,
+        "updatedAt": created_at,
+        "lines": [],
+    }
+    try:
+        for index, turn in enumerate(scene["turns"]):
+            role_key = str(turn["role"])
+            text = str(turn["text"]).strip()
+            context, assistant_text = dialogue_turn_context(scene, index)
+            audio, take = synthesize_locked_take(
+                seed_id=cast[role_key], text=text, assistant_text=assistant_text, context=context
+            )
+            filename = f"line_{index + 1:02d}_{role_key}.wav"
+            relative_file = f"lines/{filename}"
+            atomic_write(lines_dir / filename, audio)
+            manifest["lines"].append({
+                "index": index,
+                "role": role_key,
+                "roleName": scene["roles"][role_key]["name"],
+                "seedId": cast[role_key],
+                "seedName": take["record"].get("name", cast[role_key]),
+                "seedSha256": take["record"].get("referenceSha256"),
+                "gender": take["gender"],
+                "text": text,
+                "emotion": turn.get("emotion", "自然"),
+                "direction": turn.get("direction", "自然接話"),
+                "listen": turn.get("listen", "先聽再說"),
+                "pauseAfterSeconds": round(float(turn.get("pauseAfter", 0.6)) * pause_scale, 3),
+                "file": relative_file,
+                "durationSeconds": take["durationSeconds"],
+                "originalDurationSeconds": take["originalDurationSeconds"],
+                "durationLimited": take["durationLimited"],
+                "sha256": hashlib.sha256(audio).hexdigest(),
+                "createdAt": datetime.now(timezone.utc).isoformat(),
+            })
+        rebuild_dialogue_scene_audio(scene_dir, manifest)
+    except Exception:
+        # Keep already generated line takes for diagnosis and recovery; mark the
+        # partial scene explicitly instead of silently presenting it as ready.
+        manifest["status"] = "partial"
+        manifest["updatedAt"] = datetime.now(timezone.utc).isoformat()
+        atomic_write(scene_dir / "scene.json", json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
+        raise
+    manifest["status"] = "ready"
+    atomic_write(scene_dir / "scene.json", json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
+    update_dialogue_catalog(manifest)
+    refresh_dashboard()
+    return dialogue_scene_result(manifest)
+
+
+def regenerate_dialogue_line(payload: dict[str, Any]) -> dict[str, Any]:
+    """Replace one line take and rebuild the complete scene master."""
+    scene_id = str(payload.get("sceneId", "")).strip()
+    try:
+        line_index = int(payload.get("lineIndex", -1))
+    except (TypeError, ValueError) as exc:
+        raise ValueError("重生句序無效") from exc
+    scene_dir = DIALOGUE_SCENES / safe_slug(scene_id)
+    manifest = load_json(scene_dir / "scene.json", None)
+    if not isinstance(manifest, dict) or manifest.get("id") != scene_id:
+        raise ValueError("找不到指定雙人場景成品")
+    scene = get_dialogue_scene(str(manifest.get("templateId", "")))
+    if not scene or line_index < 0 or line_index >= len(manifest.get("lines", [])):
+        raise ValueError("找不到指定對白回合")
+    line = manifest["lines"][line_index]
+    role_key = str(line["role"])
+    seed_id = str(payload.get("seedId", "")).strip() or str(line["seedId"])
+    context, assistant_text = dialogue_turn_context(scene, line_index)
+    text = str(line["text"])
+    audio, take = synthesize_locked_take(seed_id=seed_id, text=text, assistant_text=assistant_text, context=context)
+    line_path = scene_dir / str(line["file"])
+    atomic_write(line_path, audio)
+    line.update({
+        "seedId": seed_id,
+        "seedName": take["record"].get("name", seed_id),
+        "seedSha256": take["record"].get("referenceSha256"),
+        "gender": take["gender"],
+        "durationSeconds": take["durationSeconds"],
+        "originalDurationSeconds": take["originalDurationSeconds"],
+        "durationLimited": take["durationLimited"],
+        "sha256": hashlib.sha256(audio).hexdigest(),
+        "createdAt": datetime.now(timezone.utc).isoformat(),
+    })
+    rebuild_dialogue_scene_audio(scene_dir, manifest)
+    refresh_dashboard()
+    return dialogue_scene_result(manifest)
+
+
+def dialogue_scene_result(manifest: dict[str, Any]) -> dict[str, Any]:
+    scene_id = str(manifest["id"])
+    quoted_id = urllib.parse.quote(scene_id)
+    return {
+        "id": scene_id,
+        "templateId": manifest["templateId"],
+        "title": manifest["title"],
+        "format": manifest["format"],
+        "genre": manifest["genre"],
+        "url": f"/dialogue_scenes/{quoted_id}/scene.wav",
+        "manifestUrl": f"/dialogue_scenes/{quoted_id}/scene.json",
+        "durationSeconds": manifest.get("durationSeconds", 0.0),
+        "lineCount": len(manifest.get("lines", [])),
+        "roles": manifest.get("roles", {}),
+        "lines": [
+            {
+                **{key: line.get(key) for key in ("index", "role", "roleName", "seedId", "seedName", "gender", "text", "emotion", "durationSeconds", "durationLimited")},
+                "url": f"/dialogue_scenes/{quoted_id}/{urllib.parse.quote(str(line.get('file', '')))}",
+            }
+            for line in manifest.get("lines", [])
+        ],
+    }
+
+
 def write_generation_index(manifest: dict[str, Any]) -> None:
     cards = []
     for sample in manifest.get("samples", []):
@@ -613,6 +954,10 @@ class StudioHandler(SimpleHTTPRequestHandler):
         if path == "/api/seeds":
             self.send_json(200, {"seeds": seed_records()})
             return
+        if path == "/api/dialogue-scenes":
+            catalog = load_json(DIALOGUE_SCENES / "manifest.json", {"schemaVersion": 1, "scenes": []})
+            self.send_json(200, catalog if isinstance(catalog, dict) else {"schemaVersion": 1, "scenes": []})
+            return
         try:
             super().do_GET()
         except (BrokenPipeError, ConnectionResetError):
@@ -633,6 +978,14 @@ class StudioHandler(SimpleHTTPRequestHandler):
                 result = generate_from_seed(payload)
                 self.send_json(201, {"ok": True, "generation": result})
                 return
+            if parsed.path == "/api/dialogue-scenes":
+                result = generate_dialogue_scene(payload)
+                self.send_json(201, {"ok": True, "scene": result})
+                return
+            if parsed.path == "/api/dialogue-scenes/regenerate-line":
+                result = regenerate_dialogue_line(payload)
+                self.send_json(200, {"ok": True, "scene": result})
+                return
             self.send_json(404, {"ok": False, "error": "Not found"})
         except (ValueError, RuntimeError, MimoRequestError, OSError, json.JSONDecodeError) as exc:
             self.send_json(400, {"ok": False, "error": str(exc)[:1000]})
@@ -642,6 +995,7 @@ def run_server(host: str = "127.0.0.1", port: int = 8765) -> None:
     OUTPUTS.mkdir(parents=True, exist_ok=True)
     SEEDS.mkdir(parents=True, exist_ok=True)
     GENERATIONS.mkdir(parents=True, exist_ok=True)
+    DIALOGUE_SCENES.mkdir(parents=True, exist_ok=True)
     existing_manifest = load_json(GENERATIONS / "manifest.json", None)
     if isinstance(existing_manifest, dict):
         changed = False

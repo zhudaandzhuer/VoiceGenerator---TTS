@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "scenes": [
+    {
+      "id": "scene_20260809_020345_rain-platform-choice_18ef825652",
+      "templateId": "rain-platform-choice",
+      "title": "末班月台｜留下還是放手",
+      "format": "電視劇",
+      "genre": "現代愛情",
+      "createdAt": "2026-08-09T02:03:45.200601+00:00",
+      "updatedAt": "2026-08-09T02:05:38.325063+00:00",
+      "durationSeconds": 30.93,
+      "lineCount": 4,
+      "sceneFile": "scene_20260809_020345_rain-platform-choice_18ef825652/scene.wav",
+      "roles": {
+        "A": {
+          "name": "程野",
+          "suggestedGender": "男性",
+          "seedId": "seed_20260806_074920_seed_a9d7843289",
+          "seedName": "模板聲種｜可靠知己",
+          "seedGender": "男性",
+          "seedSha256": "a9d7843289b6ccfbd980b82bced39b2f344bb84ab636b029bb1ef0fd6c15f540"
+        },
+        "B": {
+          "name": "林晚",
+          "suggestedGender": "女性",
+          "seedId": "seed_20260806_075045_seed_7cc2f9f7de",
+          "seedName": "模板聲種｜軟聲戀人",
+          "seedGender": "女性",
+          "seedSha256": "7cc2f9f7de8a350d0681e94b16c03b6ff2d129b735d1ae904f5ee669579e4693"
+        }
+      }
+    }
+  ],
+  "galleryTitle": "雙人對手戲",
+  "generatedAt": "2026-08-09T02:05:38.325792+00:00",
+  "sceneCount": 1
+}
