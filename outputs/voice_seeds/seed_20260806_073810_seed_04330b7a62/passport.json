@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "seedId": "seed_20260806_073810_seed_04330b7a62",
+  "identity": {
+    "name": "模板聲種｜熱血少年",
+    "gender": "男性",
+    "kind": "text_design",
+    "description": "性別硬性要求：輸出必須是男性聲線；不得出現女性高亮共鳴、女性音色或女性年齡特徵。 年輕男性，少年動畫主角聲線，明亮有衝勁、帶青春感，音高不過低，熱血但不嘶吼破音。 請把性別當成不可違反的演員選角條件，並保持年齡、共鳴位置與說話習慣一致。",
+    "language": "zh-Hant / Mandarin",
+    "status": "production"
+  },
+  "defaultAnchorId": "anchor_04330b7a62",
+  "activeVersionId": "version_04330b7a62",
+  "anchors": [
+    {
+      "id": "anchor_04330b7a62",
+      "label": "原始主錨點",
+      "mode": "neutral",
+      "file": "reference.wav",
+      "mime": "audio/wav",
+      "sha256": "04330b7a627be46b4959915ea8a7692105fca0b60373faf2c0937f7348600af9",
+      "bytes": 683564,
+      "durationSeconds": 14.24,
+      "createdAt": "2026-08-06T07:38:10.194747+00:00",
+      "source": "legacy_reference"
+    }
+  ],
+  "versions": [
+    {
+      "id": "version_04330b7a62",
+      "label": "原始版本",
+      "anchorId": "anchor_04330b7a62",
+      "parentVersionId": null,
+      "notes": "由既有聲音種子自動建立的不可變基線。",
+      "constraints": {
+        "gender": "男性",
+        "preserveIdentity": true
+      },
+      "createdAt": "2026-08-06T07:38:10.194747+00:00"
+    }
+  ],
+  "createdAt": "2026-08-06T07:38:10.194747+00:00",
+  "updatedAt": "2026-08-09T02:50:33.138788+00:00"
+}

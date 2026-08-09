@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "seedId": "seed_20260806_073705_seed_5828f2a17d",
+  "identity": {
+    "name": "模板聲種｜甜美少女",
+    "gender": "女性",
+    "kind": "text_design",
+    "description": "性別硬性要求：輸出必須是女性聲線；不得出現男性低沉共鳴、男性音色或男性年齡特徵。 年輕女性，甜美清亮、自然有笑意，像戀愛劇女主角，輕柔但不幼稚，咬字清楚，不要低沉。 請把性別當成不可違反的演員選角條件，並保持年齡、共鳴位置與說話習慣一致。",
+    "language": "zh-Hant / Mandarin",
+    "status": "production"
+  },
+  "defaultAnchorId": "anchor_5828f2a17d",
+  "activeVersionId": "version_5828f2a17d",
+  "anchors": [
+    {
+      "id": "anchor_5828f2a17d",
+      "label": "原始主錨點",
+      "mode": "neutral",
+      "file": "reference.wav",
+      "mime": "audio/wav",
+      "sha256": "5828f2a17d3aab6a26dc7b76046296befb969e3c06ebc08461916feec86448a3",
+      "bytes": 645164,
+      "durationSeconds": 13.44,
+      "createdAt": "2026-08-06T07:37:05.849899+00:00",
+      "source": "legacy_reference"
+    }
+  ],
+  "versions": [
+    {
+      "id": "version_5828f2a17d",
+      "label": "原始版本",
+      "anchorId": "anchor_5828f2a17d",
+      "parentVersionId": null,
+      "notes": "由既有聲音種子自動建立的不可變基線。",
+      "constraints": {
+        "gender": "女性",
+        "preserveIdentity": true
+      },
+      "createdAt": "2026-08-06T07:37:05.849899+00:00"
+    }
+  ],
+  "createdAt": "2026-08-06T07:37:05.849899+00:00",
+  "updatedAt": "2026-08-09T02:50:33.152445+00:00"
+}

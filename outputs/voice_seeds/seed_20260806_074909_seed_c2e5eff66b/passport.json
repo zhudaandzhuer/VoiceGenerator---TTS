@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "seedId": "seed_20260806_074909_seed_c2e5eff66b",
+  "identity": {
+    "name": "模板聲種｜鄰家暖光",
+    "gender": "女性",
+    "kind": "text_design",
+    "description": "性別硬性要求：輸出必須是女性聲線；不得出現男性低沉共鳴、男性音色或男性年齡特徵。 成年女性，清透自然的鄰家聲，像真人在同一個房間輕聲交談；保留自然呼吸、微小停頓與笑意，不要播音腔或機械等重音。 自然人聲要求：像真人在同一個房間一次錄製，保留自然呼吸、微小而不規則的停頓、口語連貫與細微強弱變化；重點字可以輕輕加深，但不要每字等長等重、不要機械升降、不要客服播報腔、不要過度完美的合成感。 請把性別當成不可違反的演員選角條件，並保持年齡、共鳴位置與說話習慣一致。",
+    "language": "zh-Hant / Mandarin",
+    "status": "production"
+  },
+  "defaultAnchorId": "anchor_c2e5eff66b",
+  "activeVersionId": "version_c2e5eff66b",
+  "anchors": [
+    {
+      "id": "anchor_c2e5eff66b",
+      "label": "原始主錨點",
+      "mode": "neutral",
+      "file": "reference.wav",
+      "mime": "audio/wav",
+      "sha256": "c2e5eff66b75792f185d8337e4192a2a1cd802784f152939e909d4aca2635610",
+      "bytes": 614444,
+      "durationSeconds": 12.8,
+      "createdAt": "2026-08-06T07:49:09.047545+00:00",
+      "source": "legacy_reference"
+    }
+  ],
+  "versions": [
+    {
+      "id": "version_c2e5eff66b",
+      "label": "原始版本",
+      "anchorId": "anchor_c2e5eff66b",
+      "parentVersionId": null,
+      "notes": "由既有聲音種子自動建立的不可變基線。",
+      "constraints": {
+        "gender": "女性",
+        "preserveIdentity": true
+      },
+      "createdAt": "2026-08-06T07:49:09.047545+00:00"
+    }
+  ],
+  "createdAt": "2026-08-06T07:49:09.047545+00:00",
+  "updatedAt": "2026-08-09T02:50:33.131949+00:00"
+}

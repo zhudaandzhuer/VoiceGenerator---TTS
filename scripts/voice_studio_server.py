@@ -20,7 +20,7 @@ import struct
 import urllib.parse
 import wave
 from datetime import datetime, timezone
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 
@@ -29,6 +29,7 @@ from dialogue_scene_templates import get_dialogue_scene
 from generate_tts_catalog import load_local_env
 from paths import resolve_workspace_root
 from providers.mimo import DEFAULT_BASE_URL, MimoRequestError, request_audio
+import seed_asset_system as asset_system
 
 
 ROOT = resolve_workspace_root()
@@ -190,26 +191,32 @@ def duration_limit(text: str) -> float:
     return max(8.0, min(52.0, 4.0 + spoken_chars * 0.65))
 
 
-def load_seed_reference(seed_id: str) -> tuple[dict[str, Any], str, str]:
+def load_seed_reference(
+    seed_id: str,
+    anchor_id: str = "",
+    performance_tags: list[str] | None = None,
+) -> tuple[dict[str, Any], str, str]:
     """Load one locked seed and return its record, gender and data URL."""
     seed_id = str(seed_id).strip()
-    seed_dir = SEEDS / safe_slug(seed_id)
-    record = load_json(seed_dir / "seed.json", None)
-    if not isinstance(record, dict) or record.get("id") != seed_id:
-        raise ValueError("找不到指定聲音種子")
-    reference_file = str(record.get("referenceFile", ""))
-    reference_path = seed_dir / reference_file
-    if not reference_path.exists():
-        raise ValueError("聲音種子的參考音檔不存在")
+    record, anchor, reference_path = asset_system.resolve_anchor(
+        OUTPUTS, seed_id, anchor_id=anchor_id, performance_tags=performance_tags
+    )
     reference_audio = reference_path.read_bytes()
-    mime = str(record.get("referenceMime", "audio/wav"))
+    mime = str(anchor.get("mime", record.get("referenceMime", "audio/wav")))
     data_url = f"data:{mime};base64,{base64.b64encode(reference_audio).decode('ascii')}"
-    return record, normalize_gender(record.get("gender")), data_url
+    selected_record = dict(record)
+    selected_record["selectedAnchorId"] = anchor.get("id")
+    selected_record["selectedAnchorLabel"] = anchor.get("label")
+    selected_record["selectedAnchorSha256"] = anchor.get("sha256")
+    return selected_record, normalize_gender(record.get("gender")), data_url
 
 
-def synthesize_locked_take(*, seed_id: str, text: str, assistant_text: str, context: str) -> tuple[bytes, dict[str, Any]]:
+def synthesize_locked_take(
+    *, seed_id: str, text: str, assistant_text: str, context: str,
+    anchor_id: str = "", performance_tags: list[str] | None = None,
+) -> tuple[bytes, dict[str, Any]]:
     """Generate one voice-locked WAV with retry and deterministic length guards."""
-    record, gender, voice_data_url = load_seed_reference(seed_id)
+    record, gender, voice_data_url = load_seed_reference(seed_id, anchor_id, performance_tags)
     voice_lock = (
         "這是一個已鎖定的聲音種子。保持參考音檔的音色身份、年齡、性別、共鳴位置、口音與說話習慣，"
         "不得因角色、情緒或場景重新設計聲線，只改變本次表演。"
@@ -377,19 +384,7 @@ def load_json(path: Path, fallback: Any) -> Any:
 
 
 def seed_records() -> list[dict[str, Any]]:
-    records: list[dict[str, Any]] = []
-    if not SEEDS.exists():
-        return records
-    for directory in sorted(SEEDS.iterdir(), key=lambda path: path.name, reverse=True):
-        if not directory.is_dir():
-            continue
-        record = load_json(directory / "seed.json", None)
-        if not isinstance(record, dict) or not record.get("id"):
-            continue
-        record = dict(record)
-        record["audioUrl"] = f"/voice_seeds/{urllib.parse.quote(directory.name)}/{urllib.parse.quote(record.get('referenceFile', 'reference.wav'))}"
-        records.append(record)
-    return records
+    return asset_system.seed_summaries(OUTPUTS)
 
 
 def decode_data_url(data_url: str) -> tuple[str, bytes]:
@@ -505,11 +500,18 @@ def save_seed(*, name: str, kind: str, description: str, reference_text: str, mi
         "status": "ready",
     }
     atomic_write(directory / "seed.json", json.dumps(record, ensure_ascii=False, indent=2) + "\n")
+    asset_system.ensure_passport(OUTPUTS, seed_id)
     record["audioUrl"] = f"/voice_seeds/{urllib.parse.quote(seed_id)}/{urllib.parse.quote(reference_file)}"
     return record
 
 
 def generate_from_seed(payload: dict[str, Any]) -> dict[str, Any]:
+    performance_seed_id = str(payload.get("performanceSeedId", "")).strip()
+    performance_seed = asset_system.get_performance_seed(OUTPUTS, performance_seed_id) if performance_seed_id else None
+    if performance_seed_id and not performance_seed:
+        raise ValueError("找不到指定表演種子")
+    if performance_seed:
+        payload = {**performance_seed, **payload}
     seed_id = str(payload.get("seedId", "")).strip()
     text = str(payload.get("text", "")).strip()
     emotions = [str(item).strip() for item in payload.get("emotions", []) if str(item).strip()]
@@ -519,24 +521,15 @@ def generate_from_seed(payload: dict[str, Any]) -> dict[str, Any]:
     pitch = normalize_option(payload.get("pitch"), PITCHES, "自然")
     pause = normalize_option(payload.get("pause"), PAUSES, "自然停頓")
     ending = normalize_option(payload.get("ending"), ENDINGS, "完整收句")
-    performance_note = str(payload.get("performanceNote", "")).strip()[:500]
+    performance_note = str(payload.get("performanceNote") or (performance_seed or {}).get("note", "")).strip()[:500]
     if not seed_id or not text:
         raise ValueError("生成語音需要聲音種子與台詞")
     if len(text) > 8000:
         raise ValueError("單次台詞最多 8000 字")
     emotions = list(dict.fromkeys(emotions))[:5]
-    seed_dir = SEEDS / safe_slug(seed_id)
-    record = load_json(seed_dir / "seed.json", None)
-    if not isinstance(record, dict) or record.get("id") != seed_id:
-        raise ValueError("找不到指定聲音種子")
-    gender = normalize_gender(record.get("gender"))
-    reference_file = str(record.get("referenceFile", ""))
-    reference_path = seed_dir / reference_file
-    if not reference_path.exists():
-        raise ValueError("聲音種子的參考音檔不存在")
-    reference_audio = reference_path.read_bytes()
-    mime = str(record.get("referenceMime", "audio/wav"))
-    voice_data_url = f"data:{mime};base64,{base64.b64encode(reference_audio).decode('ascii')}"
+    anchor_id = str(payload.get("anchorId", "")).strip()
+    anchor_modes = performance_seed.get("anchorModes", []) if performance_seed else []
+    record, gender, voice_data_url = load_seed_reference(seed_id, anchor_id, anchor_modes)
     emotion_line = "、".join(emotions) if emotions else "平靜"
     cinema_direction, assistant_text, cinema_metadata = cinema_performance(payload, text)
     voice_lock = (
@@ -603,6 +596,25 @@ def generate_from_seed(payload: dict[str, Any]) -> dict[str, Any]:
     GENERATIONS.mkdir(parents=True, exist_ok=True)
     atomic_write(GENERATIONS / generation_file, audio)
     duration_seconds = round(duration_seconds, 3)
+    _, selected_anchor, reference_path = asset_system.resolve_anchor(
+        OUTPUTS, seed_id, anchor_id=str(record.get("selectedAnchorId", ""))
+    )
+    reference_signature = asset_system.audio_signature(reference_path)
+    take_signature = asset_system.audio_signature(GENERATIONS / generation_file)
+    acoustic_score = asset_system.acoustic_similarity(reference_signature, take_signature)
+    gate_reasons: list[str] = []
+    if duration_limited:
+        gate_reasons.append("模型輸出曾超出長度護欄，建議人工試聽")
+    if acoustic_score is not None and acoustic_score < 58:
+        gate_reasons.append("聲學輪廓偏離 Active 錨點")
+    quality_gate = {
+        "status": "review" if gate_reasons else "pass",
+        "acousticSimilarity": acoustic_score,
+        "anchorId": selected_anchor.get("id"),
+        "durationGuardTriggered": duration_limited,
+        "reasons": gate_reasons or ["長度與聲學輪廓通過自動門禁"],
+        "method": "local-signal-gate-v1",
+    }
     manifest_path = GENERATIONS / "manifest.json"
     manifest = load_json(manifest_path, {"schemaVersion": 1, "samples": []})
     if not isinstance(manifest, dict):
@@ -624,6 +636,11 @@ def generate_from_seed(payload: dict[str, Any]) -> dict[str, Any]:
         "voiceDescription": context,
         "seedId": seed_id,
         "seedSha256": record.get("referenceSha256"),
+        "anchorId": record.get("selectedAnchorId"),
+        "anchorSha256": record.get("selectedAnchorSha256"),
+        "performanceSeedId": performance_seed_id or None,
+        "performanceSeedName": performance_seed.get("name") if performance_seed else None,
+        "qualityGate": quality_gate,
         "model": "mimo-v2.5-tts-voiceclone",
         "createdAt": datetime.now(timezone.utc).isoformat(),
         "sha256": hashlib.sha256(audio).hexdigest(),
@@ -656,6 +673,11 @@ def generate_from_seed(payload: dict[str, Any]) -> dict[str, Any]:
         "url": f"/voice_generations/{urllib.parse.quote(generation_file)}",
         "seedId": seed_id,
         "seedSha256": record.get("referenceSha256"),
+        "anchorId": record.get("selectedAnchorId"),
+        "anchorLabel": record.get("selectedAnchorLabel"),
+        "performanceSeedId": performance_seed_id or None,
+        "performanceSeedName": performance_seed.get("name") if performance_seed else None,
+        "qualityGate": quality_gate,
         "gender": gender,
         "emotions": emotions,
         "intensity": intensity,
@@ -955,9 +977,23 @@ class StudioHandler(SimpleHTTPRequestHandler):
         if path == "/api/seeds":
             self.send_json(200, {"seeds": seed_records()})
             return
+        if path == "/api/studio/overview":
+            self.send_json(200, asset_system.studio_overview(OUTPUTS))
+            return
+        if path == "/api/performance-seeds":
+            self.send_json(200, {"items": asset_system.performance_seeds(OUTPUTS)})
+            return
+        if path == "/api/continuity-projects":
+            self.send_json(200, {"items": asset_system.continuity_projects(OUTPUTS)})
+            return
         if path == "/api/dialogue-scenes":
             catalog = load_json(DIALOGUE_SCENES / "manifest.json", {"schemaVersion": 1, "scenes": []})
             self.send_json(200, catalog if isinstance(catalog, dict) else {"schemaVersion": 1, "scenes": []})
+            return
+        seed_match = re.fullmatch(r"/api/seeds/([^/]+)", path)
+        if seed_match:
+            seed_id = urllib.parse.unquote(seed_match.group(1))
+            self.send_json(200, {"asset": asset_system.seed_asset(OUTPUTS, seed_id)})
             return
         try:
             super().do_GET()
@@ -979,6 +1015,17 @@ class StudioHandler(SimpleHTTPRequestHandler):
                 result = generate_from_seed(payload)
                 self.send_json(201, {"ok": True, "generation": result})
                 return
+            if parsed.path == "/api/performance-seeds":
+                result = asset_system.create_performance_seed(OUTPUTS, payload)
+                self.send_json(201, {"ok": True, "performance": result})
+                return
+            if parsed.path == "/api/casting/recommend":
+                self.send_json(200, {"ok": True, "recommendations": asset_system.recommend_cast(OUTPUTS, payload)})
+                return
+            if parsed.path == "/api/continuity-projects":
+                result = asset_system.save_continuity_project(OUTPUTS, payload)
+                self.send_json(201, {"ok": True, "project": result})
+                return
             if parsed.path == "/api/dialogue-scenes":
                 result = generate_dialogue_scene(payload)
                 self.send_json(201, {"ok": True, "scene": result})
@@ -986,6 +1033,39 @@ class StudioHandler(SimpleHTTPRequestHandler):
             if parsed.path == "/api/dialogue-scenes/regenerate-line":
                 result = regenerate_dialogue_line(payload)
                 self.send_json(200, {"ok": True, "scene": result})
+                return
+            seed_action = re.fullmatch(r"/api/seeds/([^/]+)/(anchors|versions|activate-version|certify|export)", parsed.path)
+            if seed_action:
+                seed_id = urllib.parse.unquote(seed_action.group(1))
+                action = seed_action.group(2)
+                if action == "anchors":
+                    mime, audio = decode_data_url(str(payload.get("dataUrl", "")))
+                    result = asset_system.add_anchor(OUTPUTS, seed_id, payload, mime, audio, mime_extension(mime))
+                    self.send_json(201, {"ok": True, "asset": result})
+                    return
+                if action == "versions":
+                    result = asset_system.create_version(OUTPUTS, seed_id, payload)
+                    self.send_json(201, {"ok": True, "asset": result})
+                    return
+                if action == "activate-version":
+                    result = asset_system.activate_version(OUTPUTS, seed_id, str(payload.get("versionId", "")))
+                    self.send_json(200, {"ok": True, "asset": result})
+                    return
+                if action == "certify":
+                    stress_results = []
+                    if str(payload.get("mode", "offline")) == "full":
+                        for test in (
+                            {"performanceSeedId": "perf_intimate_reality", "text": "我知道。你先別急，讓我把這句話說完。"},
+                            {"performanceSeedId": "perf_held_tears", "text": "我沒有怪你……只是那天，我真的等了很久。"},
+                            {"performanceSeedId": "perf_authority_cold", "text": "把門關上。從現在起，每一個答案都要說清楚。"},
+                            {"performanceSeedId": "perf_comedy_bounce", "text": "等等，所以你忙了整晚，只是忘了按開始？"},
+                        ):
+                            stress_results.append(generate_from_seed({"seedId": seed_id, **test}))
+                    result = asset_system.certify_seed(OUTPUTS, seed_id)
+                    self.send_json(201, {"ok": True, "certification": result, "stressResults": stress_results})
+                    return
+                result = asset_system.export_voicepack(OUTPUTS, seed_id)
+                self.send_json(201, {"ok": True, "voicepack": result})
                 return
             self.send_json(404, {"ok": False, "error": "Not found"})
         except (ValueError, RuntimeError, MimoRequestError, OSError, json.JSONDecodeError) as exc:
@@ -997,6 +1077,7 @@ def run_server(host: str = "127.0.0.1", port: int = DEFAULT_PORT) -> None:
     SEEDS.mkdir(parents=True, exist_ok=True)
     GENERATIONS.mkdir(parents=True, exist_ok=True)
     DIALOGUE_SCENES.mkdir(parents=True, exist_ok=True)
+    asset_system.ensure_layout(OUTPUTS)
     existing_manifest = load_json(GENERATIONS / "manifest.json", None)
     if isinstance(existing_manifest, dict):
         changed = False
@@ -1023,7 +1104,7 @@ def run_server(host: str = "127.0.0.1", port: int = DEFAULT_PORT) -> None:
             atomic_write(GENERATIONS / "manifest.json", json.dumps(existing_manifest, ensure_ascii=False, indent=2) + "\n")
         write_generation_index(existing_manifest)
     handler = lambda *args, **kwargs: StudioHandler(*args, directory=str(OUTPUTS), **kwargs)
-    server = HTTPServer((host, port), handler)
+    server = ThreadingHTTPServer((host, port), handler)
     print(f"Voice Seed Studio: http://{host}:{port}/index.html", flush=True)
     try:
         server.serve_forever()

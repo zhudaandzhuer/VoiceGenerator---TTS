@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "id": "cert_20260809_025358_c06f6061",
+  "seedId": "seed_20260806_075045_seed_7cc2f9f7de",
+  "seedName": "模板聲種｜軟聲戀人",
+  "versionId": "version_7cc2f9f7de",
+  "anchorId": "anchor_7cc2f9f7de",
+  "score": 90,
+  "status": "certified",
+  "checks": [
+    {
+      "name": "參考長度",
+      "passed": true,
+      "points": 12,
+      "maxPoints": 12,
+      "detail": "17.44s；建議 2–45 秒"
+    },
+    {
+      "name": "無削波",
+      "passed": true,
+      "points": 10,
+      "maxPoints": 10,
+      "detail": "削波比例 0.000%"
+    },
+    {
+      "name": "有效人聲密度",
+      "passed": true,
+      "points": 8,
+      "maxPoints": 8,
+      "detail": "靜音比例 32.5%"
+    },
+    {
+      "name": "選角硬鎖",
+      "passed": true,
+      "points": 10,
+      "maxPoints": 10,
+      "detail": "性別鎖定：女性"
+    },
+    {
+      "name": "版本血統",
+      "passed": true,
+      "points": 10,
+      "maxPoints": 10,
+      "detail": "1 個版本"
+    },
+    {
+      "name": "多錨點可用",
+      "passed": false,
+      "points": 0,
+      "maxPoints": 10,
+      "detail": "1 個錨點"
+    },
+    {
+      "name": "長度護欄",
+      "passed": true,
+      "points": 10,
+      "maxPoints": 10,
+      "detail": "4/4 個 take 合理"
+    },
+    {
+      "name": "表演覆蓋",
+      "passed": true,
+      "points": 10,
+      "maxPoints": 10,
+      "detail": "覆蓋 9 種表演標籤"
+    },
+    {
+      "name": "聲學一致性",
+      "passed": true,
+      "points": 20,
+      "maxPoints": 20,
+      "detail": "聲學輪廓 95.4 / 100；非生物辨識"
+    }
+  ],
+  "referenceSignature": {
+    "supported": true,
+    "durationSeconds": 17.44,
+    "sampleRate": 24000,
+    "rmsDbfs": -19.83,
+    "peakDbfs": -3.16,
+    "zeroCrossingRate": 0.13286,
+    "silenceRatio": 0.3245,
+    "clippingRatio": 0.0
+  },
+  "acousticSimilarity": 95.4,
+  "takeCount": 4,
+  "createdAt": "2026-08-09T02:53:58.498753+00:00",
+  "method": "local-signal-gate-v1"
+}

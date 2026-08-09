@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "seedId": "seed_20260806_062221_seed_76f490871e",
+  "identity": {
+    "name": "示範種子｜上傳男聲",
+    "gender": "不指定",
+    "kind": "audio_clone",
+    "description": "使用者上傳的固定參考音檔",
+    "language": "zh-Hant / Mandarin",
+    "status": "production"
+  },
+  "defaultAnchorId": "anchor_76f490871e",
+  "activeVersionId": "version_76f490871e",
+  "anchors": [
+    {
+      "id": "anchor_76f490871e",
+      "label": "原始主錨點",
+      "mode": "neutral",
+      "file": "reference.wav",
+      "mime": "audio/wav",
+      "sha256": "76f490871e26ad870f5d75bb1049afd13ca89b53be43571ccde665b4ff05fd55",
+      "bytes": 368684,
+      "durationSeconds": 7.68,
+      "createdAt": "2026-08-06T06:22:21.112657+00:00",
+      "source": "legacy_reference"
+    }
+  ],
+  "versions": [
+    {
+      "id": "version_76f490871e",
+      "label": "原始版本",
+      "anchorId": "anchor_76f490871e",
+      "parentVersionId": null,
+      "notes": "由既有聲音種子自動建立的不可變基線。",
+      "constraints": {
+        "gender": "不指定",
+        "preserveIdentity": true
+      },
+      "createdAt": "2026-08-06T06:22:21.112657+00:00"
+    }
+  ],
+  "createdAt": "2026-08-06T06:22:21.112657+00:00",
+  "updatedAt": "2026-08-09T02:50:33.163888+00:00"
+}

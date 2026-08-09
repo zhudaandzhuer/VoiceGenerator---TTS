@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "seedId": "seed_20260806_075045_seed_7cc2f9f7de",
+  "identity": {
+    "name": "模板聲種｜軟聲戀人",
+    "gender": "女性",
+    "kind": "text_design",
+    "description": "性別硬性要求：輸出必須是女性聲線；不得出現男性低沉共鳴、男性音色或男性年齡特徵。 年輕女性，甜軟但真實的戀人聲，近距離、帶羞怯呼吸與自然笑意；不要幼稚、不要機械撒嬌、每字清楚。 自然人聲要求：像真人在同一個房間一次錄製，保留自然呼吸、微小而不規則的停頓、口語連貫與細微強弱變化；重點字可以輕輕加深，但不要每字等長等重、不要機械升降、不要客服播報腔、不要過度完美的合成感。 請把性別當成不可違反的演員選角條件，並保持年齡、共鳴位置與說話習慣一致。",
+    "language": "zh-Hant / Mandarin",
+    "status": "production"
+  },
+  "defaultAnchorId": "anchor_7cc2f9f7de",
+  "activeVersionId": "version_7cc2f9f7de",
+  "anchors": [
+    {
+      "id": "anchor_7cc2f9f7de",
+      "label": "原始主錨點",
+      "mode": "neutral",
+      "file": "reference.wav",
+      "mime": "audio/wav",
+      "sha256": "7cc2f9f7de8a350d0681e94b16c03b6ff2d129b735d1ae904f5ee669579e4693",
+      "bytes": 837164,
+      "durationSeconds": 17.44,
+      "createdAt": "2026-08-06T07:50:45.211505+00:00",
+      "source": "legacy_reference"
+    }
+  ],
+  "versions": [
+    {
+      "id": "version_7cc2f9f7de",
+      "label": "原始版本",
+      "anchorId": "anchor_7cc2f9f7de",
+      "parentVersionId": null,
+      "notes": "由既有聲音種子自動建立的不可變基線。",
+      "constraints": {
+        "gender": "女性",
+        "preserveIdentity": true
+      },
+      "createdAt": "2026-08-06T07:50:45.211505+00:00"
+    }
+  ],
+  "createdAt": "2026-08-06T07:50:45.211505+00:00",
+  "updatedAt": "2026-08-09T02:50:33.113465+00:00"
+}

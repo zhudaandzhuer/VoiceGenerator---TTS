@@ -4,7 +4,7 @@
 ![Python](https://img.shields.io/badge/python-3.10+-3776AB?logo=python&logoColor=white)
 ![MiMo](https://img.shields.io/badge/TTS-MiMo--V2.5-c86f61)
 
-一套可直接上手的中文語音實驗與生成工作區，已封裝「聲音種子建立、情緒生成、模板復用、首頁展示」完整流程。  
+一套可直接上手的中文聲音資產作業系統，已封裝「聲音種子、表演種子、保真門禁、角色選角、場景連戲、製作匯出」完整流程。
 專案目標是：  
 - 以同一個聲音種子保留角色一致性  
 - 讓複合情緒可反覆生產  
@@ -17,6 +17,22 @@
   - 性別可強制指定（避免女聲變男聲、男聲變女聲）
   - 指定情緒、情緒強度、語速、音高、停頓、尾音、演繹方式後生成
   - 生成紀錄集中在首頁，方便追查
+- 聲音資產系統
+  - 每個聲音自動建立 Voice Passport，不再只是一個孤立 WAV
+  - 同一角色可保存自然、近景、耳語、爆發、敘事等多個聲音錨點
+  - 不可變版本血統與 Active 版本切換，改動可追溯、可回退
+  - `.voicepack` 一鍵匯出參考音檔、護照、版本與認證報告
+- 表演種子
+  - 內建 12 組可重用表演配方，涵蓋近景生活流、忍住眼淚、古裝含蓄、懸疑低語、喜劇節拍等
+  - 聲線身份與表演方法分離：換演法不重新設計角色音色
+  - 可建立自訂表演種子，保存情緒弧線、語速、收句、錨點偏好與導演筆記
+- 品質與製作
+  - 每次生成自動寫入聲音版本、錨點與表演種子血統
+  - 本地保真門禁檢查長度循環與聲學輪廓，異常 take 自動標記人工複核
+  - 快速認證掃描參考健康、性別硬鎖、版本、多錨點、表演覆蓋與既有 take
+  - 真實壓測可用四種相反演法驗證同一聲線；聲學分數僅作製作品管，不作生物身份鑑定
+  - 角色選角助手依性別、年齡感、聲線語意、認證與錨點能力排序並解釋
+  - 場景連戲專案會保存 cast、逐句時間軸與 `production_manifest.json`
 - 熱門模板
   - 內建多種熱門情境模板，保留每張模板的示範音
   - 可直接用自己的種子套用模板快速出片
@@ -102,14 +118,21 @@ python3 scripts/verify_voice_take.py --audio outputs/dialogue_scenes/<scene-id>/
   - 所有生成結果、manifest、demo 與聲音種子紀錄
   - `outputs/index.html`：總覽首頁（歷史、模板、音檔）
   - `outputs/voice_seeds/*`：種子與設定紀錄
+  - `outputs/voice_seeds/*/passport.json`：聲音護照、錨點與版本血統
   - `outputs/voice_generations/*`：正式生成結果
   - `outputs/dialogue_scenes/*`：雙人場景、逐句 WAV、完整 scene.wav 與可追溯 scene.json
+  - `outputs/performance_seeds/*`：自訂表演種子
+  - `outputs/continuity_projects/*`：連戲專案與製作 manifest
+  - `outputs/quality_reports/*`：保真認證報告
+  - `outputs/voicepacks/*`：可交付的 `.voicepack` 聲音資產包
   - `outputs/hot_templates/*`：熱門模板示範
 
 ## 支援腳本一覽
 
 - `scripts/run_dashboard.py`：一鍵啟動工作台
 - `scripts/voice_studio_server.py`：本機 API 與生成功能
+- `scripts/seed_asset_system.py`：護照、多錨點、版本、表演種子、認證、選角與 voicepack
+- `scripts/studio_client.py`：模組化 Voice Seed OS 客戶端
 - `scripts/build_test_dashboard.py`：重建總覽頁
 - `scripts/generate_hot_templates.py`：重建熱門模板音檔
 - `scripts/generate_casting_samples.py`：角色試音
@@ -121,6 +144,7 @@ python3 scripts/verify_voice_take.py --audio outputs/dialogue_scenes/<scene-id>/
 - `scripts/dialogue_scene_templates.py`：六組原創雙人對手戲、A／B 角色目的、接話反應與逐句留白
 - `scripts/test_cinema_pipeline.py`：影視配音離線回歸測試
 - `scripts/test_dialogue_scene_pipeline.py`：雙人選角、逐句生成、WAV 合成與防呆回歸測試
+- `scripts/test_seed_asset_system.py`：新資產模型、保真門禁、選角、連戲與 voicepack 離線回歸
 - `scripts/verify_voice_take.py`：用 MiMo ASR 驗收生成台詞與控制字洩漏
 
 ## 雙人對手戲工作流

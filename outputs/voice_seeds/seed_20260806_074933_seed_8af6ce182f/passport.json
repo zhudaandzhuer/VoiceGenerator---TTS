@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "seedId": "seed_20260806_074933_seed_8af6ce182f",
+  "identity": {
+    "name": "模板聲種｜慵懶磁性",
+    "gender": "男性",
+    "kind": "text_design",
+    "description": "性別硬性要求：輸出必須是男性聲線；不得出現女性高亮共鳴、女性音色或女性年齡特徵。 成年男性，慵懶磁性的近距離聲線，低沉、鬆弛、帶一點笑意與氣聲；咬字仍要清楚，不要機械拖長。 自然人聲要求：像真人在同一個房間一次錄製，保留自然呼吸、微小而不規則的停頓、口語連貫與細微強弱變化；重點字可以輕輕加深，但不要每字等長等重、不要機械升降、不要客服播報腔、不要過度完美的合成感。 請把性別當成不可違反的演員選角條件，並保持年齡、共鳴位置與說話習慣一致。",
+    "language": "zh-Hant / Mandarin",
+    "status": "production"
+  },
+  "defaultAnchorId": "anchor_8af6ce182f",
+  "activeVersionId": "version_8af6ce182f",
+  "anchors": [
+    {
+      "id": "anchor_8af6ce182f",
+      "label": "原始主錨點",
+      "mode": "neutral",
+      "file": "reference.wav",
+      "mime": "audio/wav",
+      "sha256": "8af6ce182f9a5440c3bd34f70f52ad4bf9966e78efa6c6140e6ddabf8e47f33d",
+      "bytes": 806444,
+      "durationSeconds": 16.8,
+      "createdAt": "2026-08-06T07:49:33.883286+00:00",
+      "source": "legacy_reference"
+    }
+  ],
+  "versions": [
+    {
+      "id": "version_8af6ce182f",
+      "label": "原始版本",
+      "anchorId": "anchor_8af6ce182f",
+      "parentVersionId": null,
+      "notes": "由既有聲音種子自動建立的不可變基線。",
+      "constraints": {
+        "gender": "男性",
+        "preserveIdentity": true
+      },
+      "createdAt": "2026-08-06T07:49:33.883286+00:00"
+    }
+  ],
+  "createdAt": "2026-08-06T07:49:33.883286+00:00",
+  "updatedAt": "2026-08-09T02:50:33.123828+00:00"
+}

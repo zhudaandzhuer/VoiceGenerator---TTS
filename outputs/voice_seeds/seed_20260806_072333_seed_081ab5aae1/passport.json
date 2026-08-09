@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "seedId": "seed_20260806_072333_seed_081ab5aae1",
+  "identity": {
+    "name": "上班族",
+    "gender": "女性",
+    "kind": "text_design",
+    "description": "性別硬性要求：輸出必須是女性聲線；不得出現男性低沉共鳴、男性音色或男性年齡特徵。 女性年輕上班族，平時聲音甜美 請把性別當成不可違反的演員選角條件，並保持年齡、共鳴位置與說話習慣一致。",
+    "language": "zh-Hant / Mandarin",
+    "status": "production"
+  },
+  "defaultAnchorId": "anchor_081ab5aae1",
+  "activeVersionId": "version_081ab5aae1",
+  "anchors": [
+    {
+      "id": "anchor_081ab5aae1",
+      "label": "原始主錨點",
+      "mode": "neutral",
+      "file": "reference.wav",
+      "mime": "audio/wav",
+      "sha256": "081ab5aae1f5ec432c946b9e5fa66a755a05db4314b5747c8f8d4db91592815a",
+      "bytes": 407084,
+      "durationSeconds": 8.48,
+      "createdAt": "2026-08-06T07:23:33.696414+00:00",
+      "source": "legacy_reference"
+    }
+  ],
+  "versions": [
+    {
+      "id": "version_081ab5aae1",
+      "label": "原始版本",
+      "anchorId": "anchor_081ab5aae1",
+      "parentVersionId": null,
+      "notes": "由既有聲音種子自動建立的不可變基線。",
+      "constraints": {
+        "gender": "女性",
+        "preserveIdentity": true
+      },
+      "createdAt": "2026-08-06T07:23:33.696414+00:00"
+    }
+  ],
+  "createdAt": "2026-08-06T07:23:33.696414+00:00",
+  "updatedAt": "2026-08-09T02:50:33.160543+00:00"
+}

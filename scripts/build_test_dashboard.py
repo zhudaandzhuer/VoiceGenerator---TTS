@@ -18,6 +18,7 @@ from typing import Any
 from cinema_templates import CINEMA_TEMPLATES, RESEARCH_SOURCES
 from dialogue_scene_templates import DIALOGUE_SCENES
 from paths import resolve_workspace_root
+from studio_client import render_studio
 
 
 PROJECT_ROOT_DEFAULT = resolve_workspace_root()
@@ -99,6 +100,11 @@ VISIBLE_TESTS = {
 
 
 def render_dashboard(test_data: list[dict[str, Any]], outputs_root: Path | None = None) -> str:
+    # The production client is a scalable workspace with independent modules.
+    # Keep the legacy renderer below for archival compatibility, but route all
+    # normal builds through the Voice Seed OS shell.
+    return render_studio(outputs_root or (PROJECT_ROOT_DEFAULT / "outputs"))
+
     total_samples = sum(test["generatedCount"] for test in test_data)
     compound_emotions = [
         "平靜", "喜悅", "得意", "悲傷", "憤怒", "恐懼", "驚訝", "厭惡",
@@ -906,10 +912,6 @@ def main() -> int:
     outputs_root = (args.outputs_root or (project_root / "outputs")).resolve()
     output_path = (args.output or (outputs_root / "index.html")).resolve()
     tests = collect_tests(outputs_root)
-    if not tests:
-        print(f"No valid manifests found in {outputs_root}")
-        return 0
-
     html = render_dashboard(tests, outputs_root=outputs_root)
     atomic_write(output_path, html)
     print(f"Dashboard generated: {output_path} (tests={len(tests)})")

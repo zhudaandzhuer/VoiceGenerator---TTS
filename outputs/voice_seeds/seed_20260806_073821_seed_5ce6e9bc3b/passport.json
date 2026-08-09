@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "seedId": "seed_20260806_073821_seed_5ce6e9bc3b",
+  "identity": {
+    "name": "模板聲種｜懸疑低語",
+    "gender": "女性",
+    "kind": "text_design",
+    "description": "性別硬性要求：輸出必須是女性聲線；不得出現男性低沉共鳴、男性音色或男性年齡特徵。 成年女性，近距離懸疑低語聲線，氣聲與恐懼藏在呼吸裡，字詞清楚，最後能轉為決絕；不要男性低沉。 請把性別當成不可違反的演員選角條件，並保持年齡、共鳴位置與說話習慣一致。",
+    "language": "zh-Hant / Mandarin",
+    "status": "production"
+  },
+  "defaultAnchorId": "anchor_5ce6e9bc3b",
+  "activeVersionId": "version_5ce6e9bc3b",
+  "anchors": [
+    {
+      "id": "anchor_5ce6e9bc3b",
+      "label": "原始主錨點",
+      "mode": "neutral",
+      "file": "reference.wav",
+      "mime": "audio/wav",
+      "sha256": "5ce6e9bc3b7a98c44a519ac0605e594ce6e5df3d58137844fa8c5a8d3770ba52",
+      "bytes": 745004,
+      "durationSeconds": 15.52,
+      "createdAt": "2026-08-06T07:38:21.250589+00:00",
+      "source": "legacy_reference"
+    }
+  ],
+  "versions": [
+    {
+      "id": "version_5ce6e9bc3b",
+      "label": "原始版本",
+      "anchorId": "anchor_5ce6e9bc3b",
+      "parentVersionId": null,
+      "notes": "由既有聲音種子自動建立的不可變基線。",
+      "constraints": {
+        "gender": "女性",
+        "preserveIdentity": true
+      },
+      "createdAt": "2026-08-06T07:38:21.250589+00:00"
+    }
+  ],
+  "createdAt": "2026-08-06T07:38:21.250589+00:00",
+  "updatedAt": "2026-08-09T02:50:33.135186+00:00"
+}

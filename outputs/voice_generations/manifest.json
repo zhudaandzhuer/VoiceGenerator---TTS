@@ -1932,13 +1932,61 @@
         "takeStyle": "古裝含蓄",
         "usedInlineTags": true
       }
+    },
+    {
+      "candidateId": "take_20260809_030643_seed_20260806_075045_seed_7cc2f9f7de_fb4cf5608b",
+      "characterId": "模板聲種｜軟聲戀人",
+      "displayName": "模板聲種｜軟聲戀人",
+      "voiceDisplay": "模板聲種｜軟聲戀人",
+      "gender": "女性",
+      "label": "平靜、欲言又止",
+      "tags": [
+        "聲音種子",
+        "平靜",
+        "欲言又止",
+        "電影對白",
+        "標準"
+      ],
+      "file": "take_20260809_030643_seed_20260806_075045_seed_7cc2f9f7de_fb4cf5608b.wav",
+      "text": "你回來了。先別說話，讓我好好看看你。",
+      "voiceDescription": "這是一個已鎖定的聲音種子。保持參考音檔的音色身份、年齡、性別、共鳴位置、口音與說話習慣，不要重新設計聲線，只改變本次表演。性別硬性要求：輸出必須是女性聲線；不得出現男性低沉共鳴、男性音色或男性年齡特徵。 若參考音檔與性別設定衝突，以性別設定優先。自然人聲要求：像真人在同一個房間一次錄製，保留自然呼吸、微小而不規則的停頓、口語連貫與細微強弱變化；重點字可以輕輕加深，但不要每字等長等重、不要機械升降、不要客服播報腔、不要過度完美的合成感。最重要的是不要讓每一句都用同一個下墜尾音：疑問句要保留上揚的等待感，感嘆句向前推，省略號懸住，逗號只停不收，完整陳述句才自然微降；句尾收法要有變化，不能整段像同一條機械波形。逐句語調走位（只作表演指令，不要朗讀）：1. 。：自然微降但不拉長；2. ，：只停頓不收句，保持中段音高，讓下一句接得起來；3. 。：平收、不要刻意下壓。以下情緒與演繹設定是控制指令，不是台詞，絕對不要朗讀或重複。本次複合情緒：平靜、欲言又止；情緒強度：克制。演繹方式：電影對白；語速節奏：標準；音高走向：自然起伏（讓疑問、感嘆、懸置和陳述各自有不同曲線）；停頓策略：自然停頓；收句方式：完整收句（完整不拖長；只有陳述句可自然微降，問句與感嘆句仍要保留各自語調）。導演補充：先聽見對手，再開口；不朗誦、不展示情緒。。情緒要有層次、語句要清楚，避免過度誇張或破音；只完整朗讀一次台詞，不要重複任何字詞；保留句尾但不要拖長，台詞結束後立刻停止，尾部最多保留半秒。",
+      "seedId": "seed_20260806_075045_seed_7cc2f9f7de",
+      "seedSha256": "7cc2f9f7de8a350d0681e94b16c03b6ff2d129b735d1ae904f5ee669579e4693",
+      "anchorId": "anchor_7cc2f9f7de",
+      "anchorSha256": "7cc2f9f7de8a350d0681e94b16c03b6ff2d129b735d1ae904f5ee669579e4693",
+      "performanceSeedId": "perf_intimate_reality",
+      "performanceSeedName": "近景生活流",
+      "qualityGate": {
+        "status": "pass",
+        "acousticSimilarity": 93.7,
+        "anchorId": "anchor_7cc2f9f7de",
+        "durationGuardTriggered": false,
+        "reasons": [
+          "長度與聲學輪廓通過自動門禁"
+        ],
+        "method": "local-signal-gate-v1"
+      },
+      "model": "mimo-v2.5-tts-voiceclone",
+      "createdAt": "2026-08-09T03:06:43.366035+00:00",
+      "sha256": "25d7df072d557fe861daa2381d3d0f9df04ba47c486a6c9e3d833e952c5365de",
+      "durationSeconds": 4.48,
+      "originalDurationSeconds": 4.48,
+      "durationLimited": false,
+      "intensity": "克制",
+      "delivery": "電影對白",
+      "pace": "標準",
+      "pitch": "自然起伏",
+      "pause": "自然停頓",
+      "ending": "完整收句",
+      "performanceNote": "先聽見對手，再開口；不朗誦、不展示情緒。",
+      "cinema": null
     }
   ],
-  "generatedAt": "2026-08-09T01:33:56.225021+00:00",
+  "generatedAt": "2026-08-09T03:06:43.366127+00:00",
   "provider": "xiaomi_mimo",
   "model": "mimo-v2.5-tts-voiceclone",
   "galleryTitle": "聲音種子生成紀錄",
   "gallerySubtitle": "每一筆都保存聲音種子 hash 與複合情緒指令，方便追溯與重生。",
-  "candidateCount": 57,
-  "generatedCount": 57
+  "candidateCount": 58,
+  "generatedCount": 58
 }

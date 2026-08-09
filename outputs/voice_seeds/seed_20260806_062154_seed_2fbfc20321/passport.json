@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "seedId": "seed_20260806_062154_seed_2fbfc20321",
+  "identity": {
+    "name": "示範種子｜古裝男聲",
+    "gender": "不指定",
+    "kind": "text_design",
+    "description": "成熟男性，低沉醇厚，古裝權臣氣質，語速偏慢而克制，字尾帶很輕的疲憊氣聲，吐字清楚。",
+    "language": "zh-Hant / Mandarin",
+    "status": "production"
+  },
+  "defaultAnchorId": "anchor_2fbfc20321",
+  "activeVersionId": "version_2fbfc20321",
+  "anchors": [
+    {
+      "id": "anchor_2fbfc20321",
+      "label": "原始主錨點",
+      "mode": "neutral",
+      "file": "reference.wav",
+      "mime": "audio/wav",
+      "sha256": "2fbfc2032148d29db30d3eb4a5dd8624627a7c74c257e1857ef489ec5e898e5f",
+      "bytes": 514604,
+      "durationSeconds": 10.72,
+      "createdAt": "2026-08-06T06:21:54.299662+00:00",
+      "source": "legacy_reference"
+    }
+  ],
+  "versions": [
+    {
+      "id": "version_2fbfc20321",
+      "label": "原始版本",
+      "anchorId": "anchor_2fbfc20321",
+      "parentVersionId": null,
+      "notes": "由既有聲音種子自動建立的不可變基線。",
+      "constraints": {
+        "gender": "不指定",
+        "preserveIdentity": true
+      },
+      "createdAt": "2026-08-06T06:21:54.299662+00:00"
+    }
+  ],
+  "createdAt": "2026-08-06T06:21:54.299662+00:00",
+  "updatedAt": "2026-08-09T02:50:33.165317+00:00"
+}

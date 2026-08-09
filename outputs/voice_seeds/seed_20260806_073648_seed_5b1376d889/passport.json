@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "seedId": "seed_20260806_073648_seed_5b1376d889",
+  "identity": {
+    "name": "模板聲種｜戰場女將軍",
+    "gender": "女性",
+    "kind": "text_design",
+    "description": "性別硬性要求：輸出必須是女性聲線；不得出現男性低沉共鳴、男性音色或男性年齡特徵。 成年女性，女將軍聲線，明亮而有力量，胸腔共鳴清楚，能壓住哭腔與怒意；不要男性低沉共鳴。 請把性別當成不可違反的演員選角條件，並保持年齡、共鳴位置與說話習慣一致。",
+    "language": "zh-Hant / Mandarin",
+    "status": "production"
+  },
+  "defaultAnchorId": "anchor_5b1376d889",
+  "activeVersionId": "version_5b1376d889",
+  "anchors": [
+    {
+      "id": "anchor_5b1376d889",
+      "label": "原始主錨點",
+      "mode": "neutral",
+      "file": "reference.wav",
+      "mime": "audio/wav",
+      "sha256": "5b1376d889a4540d87f2b239840754b04f2fab375232f786ad03f609b11da5cc",
+      "bytes": 1144364,
+      "durationSeconds": 23.84,
+      "createdAt": "2026-08-06T07:36:48.216703+00:00",
+      "source": "legacy_reference"
+    }
+  ],
+  "versions": [
+    {
+      "id": "version_5b1376d889",
+      "label": "原始版本",
+      "anchorId": "anchor_5b1376d889",
+      "parentVersionId": null,
+      "notes": "由既有聲音種子自動建立的不可變基線。",
+      "constraints": {
+        "gender": "女性",
+        "preserveIdentity": true
+      },
+      "createdAt": "2026-08-06T07:36:48.216703+00:00"
+    }
+  ],
+  "createdAt": "2026-08-06T07:36:48.216703+00:00",
+  "updatedAt": "2026-08-09T02:50:33.155569+00:00"
+}

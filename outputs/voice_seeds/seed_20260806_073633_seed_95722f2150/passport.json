@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "seedId": "seed_20260806_073633_seed_95722f2150",
+  "identity": {
+    "name": "模板聲種｜冷面攝政王",
+    "gender": "男性",
+    "kind": "text_design",
+    "description": "性別硬性要求：輸出必須是男性聲線；不得出現女性高亮共鳴、女性音色或女性年齡特徵。 成年男性，古裝權臣聲線，低沉醇厚、冷靜克制，近距離說話，字尾收得乾淨；不要蒼老，不要沙啞過度。 請把性別當成不可違反的演員選角條件，並保持年齡、共鳴位置與說話習慣一致。",
+    "language": "zh-Hant / Mandarin",
+    "status": "production"
+  },
+  "defaultAnchorId": "anchor_95722f2150",
+  "activeVersionId": "version_95722f2150",
+  "anchors": [
+    {
+      "id": "anchor_95722f2150",
+      "label": "原始主錨點",
+      "mode": "neutral",
+      "file": "reference.wav",
+      "mime": "audio/wav",
+      "sha256": "95722f2150f32ade6d1783cc885fe99028cb9905b2898b18b3cc328966732017",
+      "bytes": 944684,
+      "durationSeconds": 19.68,
+      "createdAt": "2026-08-06T07:36:33.271516+00:00",
+      "source": "legacy_reference"
+    }
+  ],
+  "versions": [
+    {
+      "id": "version_95722f2150",
+      "label": "原始版本",
+      "anchorId": "anchor_95722f2150",
+      "parentVersionId": null,
+      "notes": "由既有聲音種子自動建立的不可變基線。",
+      "constraints": {
+        "gender": "男性",
+        "preserveIdentity": true
+      },
+      "createdAt": "2026-08-06T07:36:33.271516+00:00"
+    }
+  ],
+  "createdAt": "2026-08-06T07:36:33.271516+00:00",
+  "updatedAt": "2026-08-09T02:50:33.158906+00:00"
+}
