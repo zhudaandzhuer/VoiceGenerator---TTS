@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "provider": "WeSpeaker",
+  "repository": "Wespeaker/wespeaker-cnceleb-resnet34",
+  "revision": "c2c6282460dd5958d8eec16785f035d92e4a2d77",
+  "filename": "cnceleb_resnet34.onnx",
+  "sha256": "78817ca21a9707ad886d50745162231027a09c997fbf2ecf741c5d8ff4db1bf8",
+  "bytes": 26534127,
+  "trainingDataset": "CN-Celeb",
+  "input": "16 kHz mono, 80-bin Kaldi fbank with CMN",
+  "licenseNote": "WeSpeaker code is Apache-2.0; pretrained weights follow their source dataset license.",
+  "source": "https://huggingface.co/Wespeaker/wespeaker-cnceleb-resnet34/resolve/c2c6282460dd5958d8eec16785f035d92e4a2d77/cnceleb_resnet34.onnx?download=true",
+  "installedAt": "2026-08-09T03:31:40.389005+00:00"
+}

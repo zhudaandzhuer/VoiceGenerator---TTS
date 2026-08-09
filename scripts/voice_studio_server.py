@@ -17,6 +17,7 @@ import os
 import re
 import sys
 import struct
+import threading
 import urllib.parse
 import wave
 from datetime import datetime, timezone
@@ -30,6 +31,8 @@ from generate_tts_catalog import load_local_env
 from paths import resolve_workspace_root
 from providers.mimo import DEFAULT_BASE_URL, MimoRequestError, request_audio
 import seed_asset_system as asset_system
+import production_queue
+import speaker_embedding
 
 
 ROOT = resolve_workspace_root()
@@ -56,6 +59,10 @@ HUMAN_VOICE_GUIDANCE = (
     "疑問句要保留上揚的等待感，感嘆句向前推，省略號懸住，逗號只停不收，完整陳述句才自然微降；"
     "句尾收法要有變化，不能整段像同一條機械波形。"
 )
+
+GENERATION_MANIFEST_LOCK = threading.RLock()
+PRODUCTION_QUEUE_LOCK = threading.Lock()
+PRODUCTION_QUEUE: production_queue.ProductionQueue | None = None
 
 
 def prosody_map(text: str) -> str:
@@ -602,28 +609,29 @@ def generate_from_seed(payload: dict[str, Any]) -> dict[str, Any]:
     reference_signature = asset_system.audio_signature(reference_path)
     take_signature = asset_system.audio_signature(GENERATIONS / generation_file)
     acoustic_score = asset_system.acoustic_similarity(reference_signature, take_signature)
+    embedding_gate = speaker_embedding.compare(reference_path, GENERATIONS / generation_file)
     gate_reasons: list[str] = []
     if duration_limited:
         gate_reasons.append("模型輸出曾超出長度護欄，建議人工試聽")
-    if acoustic_score is not None and acoustic_score < 58:
+    if embedding_gate.get("available") and embedding_gate.get("decision") != "pass":
+        gate_reasons.append(
+            "WeSpeaker 聲紋需複核" if embedding_gate.get("decision") == "review" else "WeSpeaker 聲紋明顯偏離 Active 錨點"
+        )
+    elif not embedding_gate.get("available") and acoustic_score is not None and acoustic_score < 58:
         gate_reasons.append("聲學輪廓偏離 Active 錨點")
     quality_gate = {
         "status": "review" if gate_reasons else "pass",
         "acousticSimilarity": acoustic_score,
+        "speakerEmbedding": embedding_gate,
         "anchorId": selected_anchor.get("id"),
         "durationGuardTriggered": duration_limited,
         "reasons": gate_reasons or ["長度與聲學輪廓通過自動門禁"],
-        "method": "local-signal-gate-v1",
+        "method": "wespeaker-embedding-gate-v1" if embedding_gate.get("available") else "local-signal-gate-v1",
     }
-    manifest_path = GENERATIONS / "manifest.json"
-    manifest = load_json(manifest_path, {"schemaVersion": 1, "samples": []})
-    if not isinstance(manifest, dict):
-        manifest = {"schemaVersion": 1, "samples": []}
-    manifest.setdefault("samples", [])
     generation_tags = ["聲音種子", *emotions, delivery, pace]
     if cinema_metadata:
         generation_tags = ["影視配音", cinema_metadata["genre"], *emotions]
-    manifest["samples"].append({
+    generation_record = {
         "candidateId": generation_id,
         "characterId": record["name"],
         "displayName": record["name"],
@@ -655,19 +663,8 @@ def generate_from_seed(payload: dict[str, Any]) -> dict[str, Any]:
         "ending": ending,
         "performanceNote": performance_note,
         "cinema": cinema_metadata,
-    })
-    manifest.update({
-        "generatedAt": datetime.now(timezone.utc).isoformat(),
-        "provider": "xiaomi_mimo",
-        "model": "mimo-v2.5-tts-voiceclone",
-        "galleryTitle": "聲音種子生成紀錄",
-        "gallerySubtitle": "每一筆都保存聲音種子 hash 與複合情緒指令，方便追溯與重生。",
-        "candidateCount": len(manifest["samples"]),
-        "generatedCount": len(manifest["samples"]),
-    })
-    atomic_write(manifest_path, json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
-    write_generation_index(manifest)
-    refresh_dashboard()
+    }
+    record_generation(generation_record)
     result = {
         "id": generation_id,
         "url": f"/voice_generations/{urllib.parse.quote(generation_file)}",
@@ -693,6 +690,37 @@ def generate_from_seed(payload: dict[str, Any]) -> dict[str, Any]:
     if cinema_metadata:
         result["cinema"] = cinema_metadata
     return result
+
+
+def record_generation(generation_record: dict[str, Any]) -> None:
+    """Append one take without letting concurrent requests lose manifest data."""
+    with GENERATION_MANIFEST_LOCK:
+        manifest_path = GENERATIONS / "manifest.json"
+        manifest = load_json(manifest_path, {"schemaVersion": 1, "samples": []})
+        if not isinstance(manifest, dict):
+            manifest = {"schemaVersion": 1, "samples": []}
+        manifest.setdefault("samples", []).append(generation_record)
+        manifest.update({
+            "generatedAt": datetime.now(timezone.utc).isoformat(),
+            "provider": "xiaomi_mimo",
+            "model": "mimo-v2.5-tts-voiceclone",
+            "galleryTitle": "聲音種子生成紀錄",
+            "gallerySubtitle": "每一筆都保存聲音種子 hash 與複合情緒指令，方便追溯與重生。",
+            "candidateCount": len(manifest["samples"]),
+            "generatedCount": len(manifest["samples"]),
+        })
+        atomic_write(manifest_path, json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
+        write_generation_index(manifest)
+        refresh_dashboard()
+
+
+def queue_manager() -> production_queue.ProductionQueue:
+    """Create the durable queue lazily after every server function is loaded."""
+    global PRODUCTION_QUEUE
+    with PRODUCTION_QUEUE_LOCK:
+        if PRODUCTION_QUEUE is None:
+            PRODUCTION_QUEUE = production_queue.ProductionQueue(OUTPUTS, generate_from_seed)
+        return PRODUCTION_QUEUE
 
 
 def _dialogue_scene_summary(manifest: dict[str, Any]) -> dict[str, Any]:
@@ -972,13 +1000,28 @@ class StudioHandler(SimpleHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
         if path == "/api/health":
-            self.send_json(200, {"ok": True, "service": "voice-seed-studio", "models": ["mimo-v2.5-tts-voicedesign", "mimo-v2.5-tts-voiceclone"]})
+            jobs = queue_manager().list()
+            self.send_json(200, {
+                "ok": True,
+                "service": "voice-seed-studio",
+                "models": ["mimo-v2.5-tts-voicedesign", "mimo-v2.5-tts-voiceclone"],
+                "speakerEmbedding": speaker_embedding.runtime_status(),
+                "productionQueue": {
+                    "jobCount": len(jobs),
+                    "activeCount": sum(job.get("status") in {"queued", "running", "cancelling"} for job in jobs),
+                },
+            })
             return
         if path == "/api/seeds":
             self.send_json(200, {"seeds": seed_records()})
             return
         if path == "/api/studio/overview":
-            self.send_json(200, asset_system.studio_overview(OUTPUTS))
+            overview = asset_system.studio_overview(OUTPUTS)
+            overview["productionJobs"] = queue_manager().list()
+            self.send_json(200, overview)
+            return
+        if path == "/api/speaker-embedding/status":
+            self.send_json(200, speaker_embedding.runtime_status())
             return
         if path == "/api/performance-seeds":
             self.send_json(200, {"items": asset_system.performance_seeds(OUTPUTS)})
@@ -989,6 +1032,13 @@ class StudioHandler(SimpleHTTPRequestHandler):
         if path == "/api/dialogue-scenes":
             catalog = load_json(DIALOGUE_SCENES / "manifest.json", {"schemaVersion": 1, "scenes": []})
             self.send_json(200, catalog if isinstance(catalog, dict) else {"schemaVersion": 1, "scenes": []})
+            return
+        if path == "/api/production-jobs":
+            self.send_json(200, {"items": queue_manager().list()})
+            return
+        job_match = re.fullmatch(r"/api/production-jobs/([^/]+)", path)
+        if job_match:
+            self.send_json(200, {"job": queue_manager().get(urllib.parse.unquote(job_match.group(1)))})
             return
         seed_match = re.fullmatch(r"/api/seeds/([^/]+)", path)
         if seed_match:
@@ -1014,6 +1064,19 @@ class StudioHandler(SimpleHTTPRequestHandler):
             if parsed.path == "/api/generate":
                 result = generate_from_seed(payload)
                 self.send_json(201, {"ok": True, "generation": result})
+                return
+            if parsed.path == "/api/production-jobs":
+                result = queue_manager().submit(payload)
+                self.send_json(202, {"ok": True, "job": result})
+                return
+            job_action = re.fullmatch(r"/api/production-jobs/([^/]+)/(cancel|retry)", parsed.path)
+            if job_action:
+                job_id = urllib.parse.unquote(job_action.group(1))
+                if job_action.group(2) == "cancel":
+                    result = queue_manager().cancel(job_id)
+                else:
+                    result = queue_manager().retry(job_id, bool(payload.get("failedOnly", False)))
+                self.send_json(200, {"ok": True, "job": result})
                 return
             if parsed.path == "/api/performance-seeds":
                 result = asset_system.create_performance_seed(OUTPUTS, payload)
@@ -1078,6 +1141,7 @@ def run_server(host: str = "127.0.0.1", port: int = DEFAULT_PORT) -> None:
     GENERATIONS.mkdir(parents=True, exist_ok=True)
     DIALOGUE_SCENES.mkdir(parents=True, exist_ok=True)
     asset_system.ensure_layout(OUTPUTS)
+    queue_manager()
     existing_manifest = load_json(GENERATIONS / "manifest.json", None)
     if isinstance(existing_manifest, dict):
         changed = False
@@ -1112,6 +1176,7 @@ def run_server(host: str = "127.0.0.1", port: int = DEFAULT_PORT) -> None:
         print("\nVoice Seed Studio stopped.", flush=True)
     finally:
         server.server_close()
+        queue_manager().shutdown()
 
 
 if __name__ == "__main__":

@@ -22,6 +22,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import speaker_embedding
+
 
 SAFE_ID = re.compile(r"[^a-zA-Z0-9_-]+")
 GENDERS = {"女性", "男性", "中性／不指定", "不指定"}
@@ -531,13 +533,37 @@ def certify_seed(outputs: Path, seed_id: str) -> dict[str, Any]:
     check("表演覆蓋", emotion_coverage >= 4, 10, f"覆蓋 {emotion_coverage} 種表演標籤")
 
     similarities = []
+    embedding_results = []
     for item in samples[-6:]:
         take_path = outputs / "voice_generations" / str(item.get("file", ""))
         score = acoustic_similarity(reference, audio_signature(take_path)) if take_path.exists() else None
         if score is not None:
             similarities.append(score)
+        if take_path.exists():
+            embedding = speaker_embedding.compare(reference_path, take_path)
+            if embedding.get("available") and embedding.get("score") is not None:
+                embedding_results.append(embedding)
     average_similarity = round(sum(similarities) / len(similarities), 1) if similarities else None
-    check("聲學一致性", average_similarity is not None and average_similarity >= 62, 20, f"聲學輪廓 {average_similarity if average_similarity is not None else '無資料'} / 100；非生物辨識")
+    embedding_score = round(
+        sum(float(item["score"]) for item in embedding_results) / len(embedding_results), 1
+    ) if embedding_results else None
+    embedding_cosine = round(
+        sum(float(item["cosineSimilarity"]) for item in embedding_results) / len(embedding_results), 6
+    ) if embedding_results else None
+    if embedding_score is not None:
+        check(
+            "WeSpeaker 聲紋一致性",
+            all(item.get("decision") == "pass" for item in embedding_results),
+            20,
+            f"平均 cosine {embedding_cosine:.6f} · 分數 {embedding_score}/100 · {len(embedding_results)} 個 take",
+        )
+    else:
+        check(
+            "聲學一致性（後備）",
+            average_similarity is not None and average_similarity >= 62,
+            20,
+            f"聲學輪廓 {average_similarity if average_similarity is not None else '無資料'} / 100；embedding 尚不可用",
+        )
 
     score = sum(item["points"] for item in checks)
     status = "certified" if score >= 80 else "review" if score >= 60 else "blocked"
@@ -554,6 +580,14 @@ def certify_seed(outputs: Path, seed_id: str) -> dict[str, Any]:
         "checks": checks,
         "referenceSignature": reference,
         "acousticSimilarity": average_similarity,
+        "speakerEmbedding": {
+            "available": bool(embedding_results),
+            "provider": "wespeaker-cnceleb-resnet34-onnx" if embedding_results else "fallback",
+            "score": embedding_score,
+            "cosineSimilarity": embedding_cosine,
+            "sampleCount": len(embedding_results),
+            "embeddingDimensions": embedding_results[0].get("embeddingDimensions") if embedding_results else None,
+        },
         "takeCount": len(samples),
         "createdAt": utc_now(),
         "method": "local-signal-gate-v1",
@@ -717,5 +751,6 @@ def studio_overview(outputs: Path) -> dict[str, Any]:
         "projects": projects,
         "recentGenerations": list(reversed(generations[-18:])),
         "recentScenes": scene_items[:8],
-        "capabilities": ["聲音護照", "多錨點", "版本血統", "表演種子", "保真門禁", "角色選角", "場景連戲", "voicepack"],
+        "speakerEmbedding": speaker_embedding.runtime_status(),
+        "capabilities": ["聲音護照", "多錨點", "版本血統", "表演種子", "WeSpeaker 聲紋", "保真門禁", "角色選角", "場景連戲", "voicepack"],
     }

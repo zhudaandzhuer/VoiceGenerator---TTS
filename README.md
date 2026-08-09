@@ -28,11 +28,17 @@
   - 可建立自訂表演種子，保存情緒弧線、語速、收句、錨點偏好與導演筆記
 - 品質與製作
   - 每次生成自動寫入聲音版本、錨點與表演種子血統
-  - 本地保真門禁檢查長度循環與聲學輪廓，異常 take 自動標記人工複核
+  - WeSpeaker CN-Celeb ResNet34 以 256 維 speaker embedding 比對 Active 錨點；模型未安裝時自動退回本地訊號輪廓
+  - 本地保真門禁同時檢查長度循環、聲紋相似度與聲學輪廓，異常 take 自動標記人工複核
   - 快速認證掃描參考健康、性別硬鎖、版本、多錨點、表演覆蓋與既有 take
-  - 真實壓測可用四種相反演法驗證同一聲線；聲學分數僅作製作品管，不作生物身份鑑定
+  - 真實壓測可用四種相反演法驗證同一聲線；聲紋分數用於製作品管，不作法律身份鑑定
   - 角色選角助手依性別、年齡感、聲線語意、認證與錨點能力排序並解釋；可勾選最多四名用同一句台詞批次 A/B 試鏡
   - 場景連戲專案會保存 cast、逐句時間軸與 `production_manifest.json`
+- 持久化製作佇列
+  - 單句生成與 A/B 試鏡都能交給伺服器端佇列，關閉瀏覽器仍會繼續
+  - 單工序列避免 API 暴衝與 manifest 競爭；每完成一個 take 就立即落盤
+  - 支援逐項進度、取消、失敗隔離、只重試失敗項與整批重跑
+  - 工作站重啟後會把執行中任務標為中斷，必須手動重試，避免無意重複計費
 - 熱門模板
   - 內建多種熱門情境模板，保留每張模板的示範音
   - 可直接用自己的種子套用模板快速出片
@@ -87,6 +93,9 @@ cd "/Users/yaowei/Documents/GameGod/VoiceGenerator - TTS"
 # 確認依賴與環境
 source scripts/.env
 
+# 安裝本地聲紋驗證依賴並下載校驗過的固定版 WeSpeaker 模型
+python3 scripts/setup_speaker_embedding.py
+
 # 只重建專案入口頁（可重複執行）
 python3 scripts/build_test_dashboard.py
 
@@ -99,8 +108,7 @@ python3 scripts/build_test_dashboard.py
 python3 scripts/generate_voice_gallery.py
 
 # 離線驗證影視模板與防呆
-python3 scripts/test_cinema_pipeline.py
-python3 scripts/test_dialogue_scene_pipeline.py
+python3 -m unittest discover -s scripts -p 'test_*.py' -v
 
 # 用 MiMo ASR 驗收最新 take：檢查控制字、重複段落與台詞偏離
 python3 scripts/verify_voice_take.py
@@ -124,6 +132,8 @@ python3 scripts/verify_voice_take.py --audio outputs/dialogue_scenes/<scene-id>/
   - `outputs/performance_seeds/*`：自訂表演種子
   - `outputs/continuity_projects/*`：連戲專案與製作 manifest
   - `outputs/quality_reports/*`：保真認證報告
+  - `outputs/production_jobs/*`：持久化製作佇列、逐項進度與錯誤
+  - `outputs/models/*`：本機聲紋模型；大型 ONNX 不進 Git，使用 setup 腳本下載並校驗
   - `outputs/voicepacks/*`：可交付的 `.voicepack` 聲音資產包
   - `outputs/hot_templates/*`：熱門模板示範
 
@@ -131,7 +141,10 @@ python3 scripts/verify_voice_take.py --audio outputs/dialogue_scenes/<scene-id>/
 
 - `scripts/run_dashboard.py`：一鍵啟動工作台
 - `scripts/voice_studio_server.py`：本機 API 與生成功能
+- `scripts/production_queue.py`：可恢復、可取消、可重試的持久化製作佇列
 - `scripts/seed_asset_system.py`：護照、多錨點、版本、表演種子、認證、選角與 voicepack
+- `scripts/speaker_embedding.py`：WeSpeaker ONNX speaker embedding 與保真門禁
+- `scripts/setup_speaker_embedding.py`：安裝依賴並下載固定 revision／SHA256 的聲紋模型
 - `scripts/studio_client.py`：模組化 Voice Seed OS 客戶端
 - `scripts/build_test_dashboard.py`：重建總覽頁
 - `scripts/generate_hot_templates.py`：重建熱門模板音檔
@@ -145,6 +158,8 @@ python3 scripts/verify_voice_take.py --audio outputs/dialogue_scenes/<scene-id>/
 - `scripts/test_cinema_pipeline.py`：影視配音離線回歸測試
 - `scripts/test_dialogue_scene_pipeline.py`：雙人選角、逐句生成、WAV 合成與防呆回歸測試
 - `scripts/test_seed_asset_system.py`：新資產模型、保真門禁、選角、連戲與 voicepack 離線回歸
+- `scripts/test_production_queue.py`：持久化、失敗隔離、取消與重啟恢復測試
+- `scripts/test_speaker_embedding.py`：聲紋模型可用性、降級與門檻測試
 - `scripts/verify_voice_take.py`：用 MiMo ASR 驗收生成台詞與控制字洩漏
 
 ## 雙人對手戲工作流
