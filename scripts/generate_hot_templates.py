@@ -27,7 +27,7 @@ from build_test_dashboard import atomic_write, collect_tests, render_dashboard
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate audio for hot voice templates")
     parser.add_argument("--project-root", type=Path, default=resolve_workspace_root())
-    parser.add_argument("--base-url", default="http://127.0.0.1:8765")
+    parser.add_argument("--base-url", default="http://127.0.0.1:8888")
     parser.add_argument("--force", action="store_true", help="Regenerate existing template audio")
     parser.add_argument("--limit", type=int, default=0, help="Only process the first N templates")
     return parser.parse_args()

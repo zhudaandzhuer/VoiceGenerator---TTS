@@ -10,7 +10,7 @@ from pathlib import Path
 
 from build_test_dashboard import main as build_dashboard
 from paths import resolve_workspace_root
-from voice_studio_server import run_server
+from voice_studio_server import DEFAULT_PORT, run_server
 
 
 def parse_args() -> argparse.Namespace:
@@ -24,10 +24,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--no-open",
         action="store_true",
-        help="Only build dashboard, do not open browser.",
+        help="Start the local server without opening a browser.",
     )
     parser.add_argument("--host", default="127.0.0.1", help="Local bind host (default: 127.0.0.1)")
-    parser.add_argument("--port", type=int, default=8765, help="Local bind port (default: 8765)")
+    parser.add_argument("--port", type=int, default=DEFAULT_PORT, help=f"Local bind port (default: {DEFAULT_PORT})")
     return parser.parse_args()
 
 
@@ -52,16 +52,15 @@ def main() -> int:
         print(f"build failed: missing {output_html}")
         return 1
 
-    if args.no_open:
-        print(f"dashboard ready: {output_html}")
-        return 0
-
     url = f"http://{args.host}:{args.port}/index.html"
-    opened = webbrowser.open(url, new=2)
-    if opened:
-        print(f"opened: {url}")
-    else:
+    if args.no_open:
         print(f"studio ready: {url}")
+    else:
+        opened = webbrowser.open(url, new=2)
+        if opened:
+            print(f"opened: {url}")
+        else:
+            print(f"studio ready: {url}")
     run_server(args.host, args.port)
     return 0
 

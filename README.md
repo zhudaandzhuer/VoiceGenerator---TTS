@@ -42,6 +42,7 @@ python3 scripts/run_dashboard.py
 ```
 
 以上會啟動本機 API + 開啟首頁（同一入口可管理全部流程）。
+預設網址為 `http://127.0.0.1:8888/index.html`；如需臨時改用其他端口，可加上 `--port <端口>`。
 
 ## 環境需求與設定
 

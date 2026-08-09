@@ -36,6 +36,7 @@ OUTPUTS = ROOT / "outputs"
 SEEDS = OUTPUTS / "voice_seeds"
 GENERATIONS = OUTPUTS / "voice_generations"
 DIALOGUE_SCENES = OUTPUTS / "dialogue_scenes"
+DEFAULT_PORT = 8888
 MAX_UPLOAD_BYTES = 10 * 1024 * 1024
 SAFE_ID = re.compile(r"[^a-zA-Z0-9_-]+")
 EMOTIONS = ["怅然", "欣慰", "得意", "無奈", "愧疚", "釋然", "嫉妒", "厭倦", "忐忑", "動情"]
@@ -991,7 +992,7 @@ class StudioHandler(SimpleHTTPRequestHandler):
             self.send_json(400, {"ok": False, "error": str(exc)[:1000]})
 
 
-def run_server(host: str = "127.0.0.1", port: int = 8765) -> None:
+def run_server(host: str = "127.0.0.1", port: int = DEFAULT_PORT) -> None:
     OUTPUTS.mkdir(parents=True, exist_ok=True)
     SEEDS.mkdir(parents=True, exist_ok=True)
     GENERATIONS.mkdir(parents=True, exist_ok=True)
@@ -1035,5 +1036,5 @@ def run_server(host: str = "127.0.0.1", port: int = 8765) -> None:
 if __name__ == "__main__":
     run_server(
         host=sys.argv[1] if len(sys.argv) > 1 else "127.0.0.1",
-        port=int(sys.argv[2]) if len(sys.argv) > 2 else 8765,
+        port=int(sys.argv[2]) if len(sys.argv) > 2 else DEFAULT_PORT,
     )
