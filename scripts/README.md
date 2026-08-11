@@ -21,13 +21,17 @@
 - `casting_selection.json`
 - `production_dialogue.json`
 
-## 環境變數
+## MiMo API 設定
+
+一般使用不需要手動寫 `.env`：啟動工作台後，點右上角 **「API」**，直接填入 API Key 與 Base URL。預設只保存在後端程序記憶體；若勾選「在此瀏覽器記住」，才會保存於瀏覽器 localStorage。
+
+自動化／CI 仍可使用環境變數：
 
 ```bash
 export MIMO_API_KEY="你的 MiMo API Key"
 export MIMO_BASE_URL="https://api.xiaomimimo.com/v1"   # 預設可省略
 # 可選：指定工作區根目錄（預設為此目錄）
-export VOICEGEN_ROOT="/Users/yaowei/Documents/GameGod/VoiceGenerator - TTS"
+export VOICEGEN_ROOT="/path/to/VoiceGenerator---TTS"
 ```
 
 ## 常用命令
@@ -101,7 +105,7 @@ Voice Seed Studio 會另外使用：
 
 工作台流程：
 
-1. 在首頁「文字設計」輸入聲音描述，或切換「上傳音檔」選擇 WAV/MP3；建立種子時先選「女性／男性（硬性）」或「中性／不指定」。
+1. 在首頁「文字設計」輸入聲音描述，或切換「上傳音檔」選擇 WAV/MP3，也可直接使用瀏覽器麥克風錄製參考聲音；建立種子時先選「女性／男性（硬性）」或「中性／不指定」。
 2. 建立後選擇種子，勾選複合情緒與強度；再選演繹方式、語速、音高、停頓、收句與導演補充，輸入台詞並生成。這些控制會寫入紀錄，方便同一角色重生同一種表演。
 3. 性別鎖定會同時寫入建種提示與 `mimo-v2.5-tts-voiceclone` 生成提示；正式生成固定使用同一份參考音檔，聲音種子 hash 與性別會寫入生成紀錄，降低聲線偏離並方便追溯。
 4. 首頁右上角「主題配色」可切換古裝月影、電影暗幕、清透日光或霓虹聲場；「熱門模板」分頁則是熱門台詞與完整生成配置，每張模板都有預先生成的 WAV，選擇你的聲音種子後可直接套用並生成。

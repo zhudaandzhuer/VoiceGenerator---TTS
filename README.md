@@ -13,7 +13,7 @@
 ## 專案特色
 
 - 本地語音工作台（Dashboard）
-  - 建立聲音種子（文字描述 / 上傳參考音檔）
+  - 建立聲音種子（文字描述 / 上傳參考音檔 / 瀏覽器直接錄音）
   - 性別可強制指定（避免女聲變男聲、男聲變女聲）
   - 指定情緒、情緒強度、語速、音高、停頓、尾音、演繹方式後生成
   - 生成紀錄集中在首頁，方便追查
@@ -82,27 +82,22 @@ python3 scripts/run_dashboard.py
 - Python 3.10+
 - 小米 MiMo API Key
 
-```bash
-cp scripts/.env.example scripts/.env
-```
+> API Key 也可以直接在工作台右上角「API」設定，不必建立 `scripts/.env`。`tp-` 開頭為 Token Plan Key，必須搭配 Token Plan 的 CN / SGP / AMS Base URL；`sk-` 開頭為按量 API Key，搭配 `https://api.xiaomimimo.com/v1`。工作台會依 Key 類型避免端點混用。
 
-編輯 `scripts/.env`，填入：
+啟動工作台後，直接點右上角 **「API」** 即可填入 MiMo API Key 與 Base URL，不需要建立 `scripts/.env`。
 
-```bash
-export MIMO_API_KEY="你的 MiMo API Key"
-export MIMO_BASE_URL="https://token-plan-sgp.xiaomimimo.com/v1"
-export VOICEGEN_ROOT="/Users/yaowei/Documents/GameGod/VoiceGenerator - TTS"
-```
+- 預設：金鑰只保存在 localhost 後端程序記憶體，不寫入專案檔案。
+- 可選「在此瀏覽器記住」：金鑰會保存於該瀏覽器的 localStorage，後端重啟後頁面可重新套用。
+- GET 狀態 API 只回傳是否已設定與 Base URL，不會把 API Key 回傳給前端。
 
-> `scripts/.env` 已列入 `.gitignore`，不會被推到 GitHub。
+如需伺服器／CI 環境，仍可選擇使用 `MIMO_API_KEY`、`MIMO_BASE_URL` 環境變數或 `scripts/.env`；網頁設定的 runtime Key 會優先使用。
 
 ## 快速開始
 
 ```bash
 cd "/Users/yaowei/Documents/GameGod/VoiceGenerator - TTS"
 
-# 確認依賴與環境
-source scripts/.env
+# API Key 可在工作台右上角設定；這裡不需要 source .env
 
 # 安裝本地聲紋驗證依賴並下載校驗過的固定版 WeSpeaker 模型
 python3 scripts/setup_speaker_embedding.py

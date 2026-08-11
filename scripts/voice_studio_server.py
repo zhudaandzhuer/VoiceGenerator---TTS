@@ -52,6 +52,11 @@ SEEDS = OUTPUTS / "voice_seeds"
 GENERATIONS = OUTPUTS / "voice_generations"
 DIALOGUE_SCENES = OUTPUTS / "dialogue_scenes"
 DEFAULT_PORT = 8888
+TOKEN_PLAN_BASE_URLS = {
+    "sgp": "https://token-plan-sgp.xiaomimimo.com/v1",
+    "cn": "https://token-plan-cn.xiaomimimo.com/v1",
+    "ams": "https://token-plan-ams.xiaomimimo.com/v1",
+}
 MAX_UPLOAD_BYTES = 260 * 1024 * 1024
 SAFE_ID = re.compile(r"[^a-zA-Z0-9_-]+")
 EMOTIONS = ["怅然", "欣慰", "得意", "無奈", "愧疚", "釋然", "嫉妒", "厭倦", "忐忑", "動情"]
@@ -78,6 +83,8 @@ AUDIO_SCENE_QUEUE_LOCK = threading.Lock()
 AUDIO_SCENE_QUEUE: audio_scene_queue.AudioSceneQueue | None = None
 MEDIA_TOOL_QUEUE_LOCK = threading.Lock()
 MEDIA_TOOL_QUEUE: media_tool_queue.MediaToolQueue | None = None
+MIMO_SETTINGS_LOCK = threading.RLock()
+RUNTIME_MIMO_SETTINGS: dict[str, str] = {"apiKey": "", "baseUrl": ""}
 
 
 def prosody_map(text: str) -> str:
@@ -438,12 +445,96 @@ def mime_extension(mime: str) -> str:
     return ".wav" if mime in {"audio/wav", "audio/x-wav"} else ".mp3"
 
 
-def api_key_and_base_url() -> tuple[str, str]:
+def mimo_key_type(api_key: str) -> str:
+    key = str(api_key or "").strip()
+    if key.startswith("tp-"):
+        return "token-plan"
+    if key.startswith("sk-"):
+        return "pay-as-you-go"
+    return "unknown" if key else "missing"
+
+
+def normalize_mimo_base_url(api_key: str, base_url: str) -> str:
+    """Keep credential type and MiMo endpoint family compatible."""
+    key_type = mimo_key_type(api_key)
+    requested = str(base_url or "").strip().rstrip("/")
+    if requested and not re.fullmatch(r"https?://[^\s]+", requested):
+        raise ValueError("MiMo Base URL 必須是 http:// 或 https:// 網址")
+    if key_type == "token-plan":
+        if not requested or requested.rstrip("/") == DEFAULT_BASE_URL.rstrip("/"):
+            return TOKEN_PLAN_BASE_URLS["sgp"]
+        if "token-plan-" not in requested:
+            raise ValueError("tp- 開頭是 Token Plan Key，請使用 Token Plan 的 CN / SGP / AMS Base URL")
+    if key_type == "pay-as-you-go" and "token-plan-" in requested:
+        raise ValueError("sk- 開頭是按量 API Key，不能搭配 Token Plan Base URL")
+    return requested or DEFAULT_BASE_URL
+
+
+def mimo_settings_status() -> dict[str, Any]:
+    """Return non-secret MiMo configuration status for the localhost UI."""
+    with MIMO_SETTINGS_LOCK:
+        runtime_key = RUNTIME_MIMO_SETTINGS.get("apiKey", "").strip()
+        runtime_base = RUNTIME_MIMO_SETTINGS.get("baseUrl", "").strip()
+    if runtime_key:
+        return {
+            "configured": True,
+            "source": "runtime",
+            "baseUrl": runtime_base or normalize_mimo_base_url(runtime_key, ""),
+            "keyType": mimo_key_type(runtime_key),
+        }
     load_local_env(ROOT)
-    key = os.environ.get("MIMO_API_KEY", "")
+    env_key = os.environ.get("MIMO_API_KEY", "").strip()
+    env_base = os.environ.get("MIMO_BASE_URL", "").strip()
+    if env_key:
+        try:
+            env_base = normalize_mimo_base_url(env_key, env_base)
+        except ValueError:
+            env_base = env_base or DEFAULT_BASE_URL
+    return {
+        "configured": bool(env_key),
+        "source": "environment" if env_key else "missing",
+        "baseUrl": env_base or DEFAULT_BASE_URL,
+        "keyType": mimo_key_type(env_key),
+    }
+
+
+def configure_runtime_mimo(payload: dict[str, Any]) -> dict[str, Any]:
+    """Configure MiMo for this server process only; never writes credentials to disk."""
+    if bool(payload.get("clear")):
+        with MIMO_SETTINGS_LOCK:
+            RUNTIME_MIMO_SETTINGS.update({"apiKey": "", "baseUrl": ""})
+        return mimo_settings_status()
+    api_key = str(payload.get("apiKey", "")).strip()
+    base_url = str(payload.get("baseUrl", "")).strip()
+    with MIMO_SETTINGS_LOCK:
+        effective_key = api_key or RUNTIME_MIMO_SETTINGS.get("apiKey", "").strip()
+        if api_key and len(api_key) > 4096:
+            raise ValueError("MiMo API Key 格式無效")
+        if not effective_key:
+            configured = False
+        else:
+            current_base = RUNTIME_MIMO_SETTINGS.get("baseUrl", "").strip()
+            effective_base = normalize_mimo_base_url(effective_key, base_url or current_base)
+            if api_key:
+                RUNTIME_MIMO_SETTINGS["apiKey"] = api_key
+            RUNTIME_MIMO_SETTINGS["baseUrl"] = effective_base
+            configured = True
+    if not configured and not mimo_settings_status()["configured"]:
+        raise ValueError("請輸入 MiMo API Key")
+    return mimo_settings_status()
+
+
+def api_key_and_base_url() -> tuple[str, str]:
+    with MIMO_SETTINGS_LOCK:
+        runtime_key = RUNTIME_MIMO_SETTINGS.get("apiKey", "").strip()
+        runtime_base = RUNTIME_MIMO_SETTINGS.get("baseUrl", "").strip()
+    if runtime_key:
+        return runtime_key, runtime_base or DEFAULT_BASE_URL
+    load_local_env(ROOT)
+    key = os.environ.get("MIMO_API_KEY", "").strip()
     if not key:
-        raise RuntimeError("MIMO_API_KEY 未設定，請檢查 scripts/.env")
-    return key, os.environ.get("MIMO_BASE_URL", DEFAULT_BASE_URL)
+        raise RuntimeError("MiMo API 尚未設定，請在工作台右上角「API 設定」輸入 API Key")
+    return key, os.environ.get("MIMO_BASE_URL", DEFAULT_BASE_URL).strip() or DEFAULT_BASE_URL
 
 
 def create_text_seed(payload: dict[str, Any]) -> dict[str, Any]:
@@ -1082,6 +1173,7 @@ class StudioHandler(SimpleHTTPRequestHandler):
                 "ok": True,
                 "service": "voice-seed-studio",
                 "models": ["mimo-v2.5-tts-voicedesign", "mimo-v2.5-tts-voiceclone"],
+                "mimo": mimo_settings_status(),
                 "speakerEmbedding": speaker_embedding.runtime_status(),
                 "productionQueue": {
                     "jobCount": len(jobs),
@@ -1090,6 +1182,9 @@ class StudioHandler(SimpleHTTPRequestHandler):
                 "audioScenes": {"items": len(audio_scene_manager().list()), "bgmPresets": len(BGM_PRESETS)},
                 "mediaAudio": separator_status(),
             })
+            return
+        if path == "/api/settings/mimo":
+            self.send_json(200, mimo_settings_status())
             return
         if path == "/api/seeds":
             self.send_json(200, {"seeds": seed_records()})
@@ -1100,6 +1195,7 @@ class StudioHandler(SimpleHTTPRequestHandler):
             overview["audioScenes"] = audio_scene_manager().list()
             overview["mediaAudioJobs"] = media_tool_manager().list()
             overview["mediaAudio"] = separator_status()
+            overview["mimo"] = mimo_settings_status()
             overview["counts"]["audioScenes"] = len(overview["audioScenes"])
             overview["counts"]["mediaAudioJobs"] = len(overview["mediaAudioJobs"])
             self.send_json(200, overview)
@@ -1164,6 +1260,10 @@ class StudioHandler(SimpleHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         try:
             payload = self.read_json()
+            if parsed.path == "/api/settings/mimo":
+                settings = configure_runtime_mimo(payload)
+                self.send_json(200, {"ok": True, **settings})
+                return
             if parsed.path == "/api/seeds":
                 kind = str(payload.get("kind", "text_design"))
                 record = create_audio_seed(payload) if kind == "audio_clone" else create_text_seed(payload)
